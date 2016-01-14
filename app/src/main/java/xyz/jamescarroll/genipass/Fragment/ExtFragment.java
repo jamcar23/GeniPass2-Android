@@ -1,8 +1,12 @@
 package xyz.jamescarroll.genipass.Fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.util.TypedValue;
 import android.view.View;
+
+import xyz.jamescarroll.genipass.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -10,7 +14,7 @@ import android.view.View;
  * {@link ExtFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class ExtFragment extends Fragment {
+public abstract class ExtFragment extends Fragment implements View.OnClickListener {
 
     protected OnFragmentInteractionListener mListener;
 
@@ -35,6 +39,24 @@ public class ExtFragment extends Fragment {
         mListener = null;
     }
 
+    private int getDimension(int id) {
+        return (int) getResources().getDimension(id);
+    }
+
+    protected View setPadding(View v) {
+        TypedValue tv = new TypedValue();
+
+        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
+            v.setPadding(getDimension(R.dimen.activity_vertical_margin),
+                    TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics())
+                            + getDimension(R.dimen.activity_horizontal_margin),
+                    getDimension(R.dimen.activity_vertical_margin),
+                    getDimension(R.dimen.activity_horizontal_margin));
+        }
+
+        return v;
+    }
+
     protected View findView(int id) {
         return getActivity().findViewById(id);
     }
@@ -50,6 +72,6 @@ public class ExtFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String str);
+        void onFragmentInteraction(Intent frag);
     }
 }

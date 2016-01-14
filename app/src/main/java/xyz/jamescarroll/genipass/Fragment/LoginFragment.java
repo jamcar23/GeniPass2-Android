@@ -1,12 +1,13 @@
 package xyz.jamescarroll.genipass.Fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import xyz.jamescarroll.genipass.PasswordActivity;
 import xyz.jamescarroll.genipass.R;
 
 /**
@@ -26,24 +27,15 @@ public class LoginFragment extends ExtFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_login, container, false);
-        TypedValue tv = new TypedValue();
-
-        if (getActivity().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true)) {
-            v.setPadding(getDimension(R.dimen.activity_vertical_margin),
-                    TypedValue.complexToDimensionPixelSize(tv.data, getResources().getDisplayMetrics())
-                            + getDimension(R.dimen.activity_horizontal_margin),
-                    getDimension(R.dimen.activity_vertical_margin),
-                    getDimension(R.dimen.activity_horizontal_margin));
-        }
-
-        return v;
+        return setPadding(inflater.inflate(R.layout.fragment_login, container, false));
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        findView(R.id.btn_login).setOnClickListener(this);
+        findView(R.id.fab).setOnClickListener(this);
     }
 
     @Override
@@ -51,7 +43,24 @@ public class LoginFragment extends ExtFragment {
         super.onDestroyView();
     }
 
-    private int getDimension(int id) {
-        return (int) getResources().getDimension(id);
+    private void handleLoginBtnClick() {
+
+    }
+
+    private void handleFabClick() {
+        Intent toPassword = new Intent(getActivity(), PasswordActivity.class);
+        startActivity(toPassword);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_login:
+                // TODO implement clicks
+                break;
+            case R.id.fab:
+                handleFabClick();
+                break;
+        }
     }
 }

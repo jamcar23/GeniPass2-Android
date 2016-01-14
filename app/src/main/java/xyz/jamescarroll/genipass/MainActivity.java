@@ -1,5 +1,6 @@
 package xyz.jamescarroll.genipass;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,6 +17,8 @@ import xyz.jamescarroll.genipass.Fragment.LoginFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ExtFragment.OnFragmentInteractionListener {
+    public static final String kExtraFragmentTag = "xyx.jamescarroll.genipass.MainActivity." +
+            "EXTRA_FRAGMENT_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +79,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.nav_camera:
+            case R.id.nav_mng:
 
             break;
 
@@ -90,7 +93,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(String str) {
+    public void onFragmentInteraction(Intent frag) {
 
     }
 
@@ -104,4 +107,5 @@ public class MainActivity extends AppCompatActivity
 
         return lf;
     }
+
 }
