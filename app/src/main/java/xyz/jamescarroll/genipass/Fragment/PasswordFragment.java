@@ -6,7 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
+import xyz.jamescarroll.genipass.Password;
 import xyz.jamescarroll.genipass.R;
 
 /**
@@ -29,6 +31,18 @@ public class PasswordFragment extends ExtFragment {
         // Inflate the layout for this fragment
         return setPadding(inflater.inflate(R.layout.fragment_password, container, false));
     }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        setTexttoTextView(R.id.tv_password, Password.pickRandomPassword(getActivity()));
+    }
+
+    private void setTexttoTextView(int view, String text) {
+        ((TextView) findView(view)).setText(text);
+    }
+
 
     public byte[] getmKey() {
         return mKey;

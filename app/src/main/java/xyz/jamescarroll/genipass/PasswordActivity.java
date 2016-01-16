@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
 import xyz.jamescarroll.genipass.Fragment.PasswordFragment;
 
 public class PasswordActivity extends AppCompatActivity implements ExtFragment.OnFragmentInteractionListener{
+    private static final String TAG = "PasswordActivity.TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,7 +21,11 @@ public class PasswordActivity extends AppCompatActivity implements ExtFragment.O
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag,
                 findPasswordFragment(null), PasswordFragment.TAG).commit();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } catch (NullPointerException e) {
+            Log.e(TAG, "onCreate: ", e);
+        }
 
     }
 
