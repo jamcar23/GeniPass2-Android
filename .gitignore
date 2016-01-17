@@ -50,7 +50,7 @@ captures/
 *.iml
 
 # OS-specific file
-readme.txts
+readme.txt
 .DS_Store
 .DS_Store?
 ._*
