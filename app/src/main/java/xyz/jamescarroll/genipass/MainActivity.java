@@ -13,6 +13,7 @@ import android.view.MenuItem;
 
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
 import xyz.jamescarroll.genipass.Fragment.LoginFragment;
+import xyz.jamescarroll.genipass.Fragment.StrengthTestFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
@@ -80,12 +81,14 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_mng:
-
+                getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
+                        LoginFragment.TAG).commit();
             break;
-
+            case R.id.nav_tester:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findStrengthTestFragment(),
+                        StrengthTestFragment.TAG).commit();
+                break;
         }
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -106,6 +109,17 @@ public class MainActivity extends AppCompatActivity
         }
 
         return lf;
+    }
+
+    private StrengthTestFragment findStrengthTestFragment() {
+        StrengthTestFragment stf = (StrengthTestFragment) getSupportFragmentManager().
+                findFragmentByTag(StrengthTestFragment.TAG);
+
+        if (stf == null) {
+            stf = new StrengthTestFragment();
+        }
+
+        return stf;
     }
 
 }

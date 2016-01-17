@@ -36,13 +36,25 @@ public class PasswordFragment extends ExtFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setTexttoTextView(R.id.tv_password, Password.pickRandomPassword(getActivity()));
+        handlePassword();
     }
 
     private void setTexttoTextView(int view, String text) {
         ((TextView) findView(view)).setText(text);
     }
 
+    private void handlePassword() {
+        String p;
+
+        if (getmKey() != null && getmKey().length > 0) {
+            p = Password.pickPassword(getmKey(), getActivity());
+        } else {
+            p = Password.pickRandomPassword(getActivity());
+        }
+
+        setTexttoTextView(R.id.tv_password, p);
+        setTexttoTextView(R.id.tv_entropy, "Entropy: " + Password.calcEntropy(p) + " bits");
+    }
 
     public byte[] getmKey() {
         return mKey;
@@ -54,6 +66,10 @@ public class PasswordFragment extends ExtFragment {
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.fab:
+                handlePassword();
+                break;
+        }
     }
 }

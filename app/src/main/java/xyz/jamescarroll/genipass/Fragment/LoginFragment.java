@@ -2,6 +2,7 @@ package xyz.jamescarroll.genipass.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,6 @@ public class LoginFragment extends ExtFragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,12 +35,8 @@ public class LoginFragment extends ExtFragment {
         super.onViewCreated(view, savedInstanceState);
 
         findView(R.id.btn_login).setOnClickListener(this);
-        findView(R.id.fab).setOnClickListener(this);
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+        ((FloatingActionButton) findView(R.id.fab)).setImageDrawable(getResources().getDrawable(
+                R.drawable.ic_add_white_24dp, getActivity().getTheme()));
     }
 
     private void handleLoginBtnClick() {

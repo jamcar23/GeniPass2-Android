@@ -2,9 +2,11 @@ package xyz.jamescarroll.genipass.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.View;
+import android.widget.EditText;
 
 import xyz.jamescarroll.genipass.R;
 
@@ -20,6 +22,13 @@ public abstract class ExtFragment extends Fragment implements View.OnClickListen
 
     public ExtFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        findView(R.id.fab).setOnClickListener(this);
     }
 
     @Override
@@ -59,6 +68,10 @@ public abstract class ExtFragment extends Fragment implements View.OnClickListen
 
     protected View findView(int id) {
         return getActivity().findViewById(id);
+    }
+
+    protected String getTextFromEditText(int view) {
+        return ((EditText) findView(view)).getText() + "";
     }
 
     /**
