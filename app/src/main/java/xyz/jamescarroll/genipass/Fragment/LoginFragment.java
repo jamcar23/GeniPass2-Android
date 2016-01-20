@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import xyz.jamescarroll.genipass.Crypto.ECKey;
 import xyz.jamescarroll.genipass.PasswordActivity;
 import xyz.jamescarroll.genipass.R;
 
@@ -40,6 +41,8 @@ public class LoginFragment extends ExtFragment {
     }
 
     private void handleLoginBtnClick() {
+        ECKey.genFromSeeds(getTextFromEditText(R.id.et_username),
+                getTextFromEditText(R.id.et_password));
 
     }
 
@@ -52,7 +55,7 @@ public class LoginFragment extends ExtFragment {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_login:
-                // TODO implement clicks
+                handleLoginBtnClick();
                 break;
             case R.id.fab:
                 handleFabClick();

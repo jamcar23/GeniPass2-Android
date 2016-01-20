@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import xyz.jamescarroll.genipass.Password;
+import xyz.jamescarroll.genipass.Crypto.Password;
 import xyz.jamescarroll.genipass.R;
 
 /**

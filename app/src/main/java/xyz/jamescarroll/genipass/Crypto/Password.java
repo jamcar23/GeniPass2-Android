@@ -1,4 +1,4 @@
-package xyz.jamescarroll.genipass;
+package xyz.jamescarroll.genipass.Crypto;
 
 import android.content.Context;
 
@@ -10,10 +10,12 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 
+import xyz.jamescarroll.genipass.R;
+
 /**
  * Created by James Carroll on 1/15/16.
  */
-public class Password {
+public class Password extends CryptoUtil {
     private static final String TAG = "Password.TAG";
     private static final SecureRandom kRand = new SecureRandom();
 
@@ -105,20 +107,6 @@ public class Password {
     public static double calcTimeToCrack(int entropy) {
         return 0.5 * Math.pow(2, entropy) * (0.01 / 100);
 
-    }
-
-    private static String bytesToHex(byte[] bytes) {
-        char[] hexChar = "0123456789ABCDEF".toCharArray();
-        char[] hexOut = new char[bytes.length * 2];
-        int v;
-
-        for (int i = 0; i < bytes.length; i++) {
-            v = bytes[i] & 0xff;
-            hexOut[i * 2] = hexChar[v >>> 4];
-            hexOut[i * 2 + 1] = hexChar[v & 0x0f];
-        }
-
-        return new String(hexOut);
     }
 
     public static String pickRandomPassword(Context context) {
