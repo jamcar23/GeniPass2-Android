@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import xyz.jamescarroll.genipass.Crypto.ECKey;
+import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
 import xyz.jamescarroll.genipass.PasswordActivity;
 import xyz.jamescarroll.genipass.R;
 
@@ -41,7 +41,7 @@ public class LoginFragment extends ExtFragment {
     }
 
     private void handleLoginBtnClick() {
-        ECKey.genFromSeeds(getTextFromEditText(R.id.et_username),
+        new AsyncMasterKeyGen(getActivity()).execute(getTextFromEditText(R.id.et_username),
                 getTextFromEditText(R.id.et_password));
 
     }

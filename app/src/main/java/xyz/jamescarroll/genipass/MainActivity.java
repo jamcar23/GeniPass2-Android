@@ -11,15 +11,20 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
+import xyz.jamescarroll.genipass.Crypto.ECKey;
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
 import xyz.jamescarroll.genipass.Fragment.LoginFragment;
 import xyz.jamescarroll.genipass.Fragment.StrengthTestFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ExtFragment.OnFragmentInteractionListener {
+        ExtFragment.OnFragmentInteractionListener, AsyncMasterKeyGen.OnKeyGeneration {
     public static final String kExtraFragmentTag = "xyx.jamescarroll.genipass.MainActivity." +
             "EXTRA_FRAGMENT_TAG";
+
+    private ECKey mMaster;
+    private boolean mMasterFinsied;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,13 @@ public class MainActivity extends AppCompatActivity
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
                 LoginFragment.TAG).commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mMasterFinsied = mMaster != null;
     }
 
     @Override
@@ -100,6 +112,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onKeyGeneration(ECKey key) {
+        this.mMaster = key;
+        this.mMasterFinsied = true;
+    }
+
     private LoginFragment findLoginFragment() {
         LoginFragment lf = (LoginFragment) getSupportFragmentManager().findFragmentByTag(
                 LoginFragment.TAG);
@@ -121,5 +139,4 @@ public class MainActivity extends AppCompatActivity
 
         return stf;
     }
-
 }

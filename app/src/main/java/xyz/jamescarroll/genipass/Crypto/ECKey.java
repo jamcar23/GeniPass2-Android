@@ -16,14 +16,15 @@ public class ECKey extends CryptoUtil {
     private byte[] mKey;
     private byte[] mChain;
 
-    private ECKey() {
-
+    private ECKey(byte[] mKey, byte[] mChain) {
+        this.mKey = mKey;
+        this.mChain = mChain;
     }
 
-    public ECKey generateChildKey(String s) {
-        ECKey child = new ECKey();
+    public void generateChildKey(String s) {
+        ECKey child;
 
-        return child;
+        return;
     }
 
     public byte[] getmKey() {
@@ -46,9 +47,11 @@ public class ECKey extends CryptoUtil {
     }
 
     public static ECKey genFromSeeds(String u, String p) {
-        ECKey eck = new ECKey();
+        ECKey eck;
         RIPEMD160Digest ripemd = new RIPEMD160Digest();
         byte[] digest = new byte[ripemd.getDigestSize()];
+        byte[] k = new byte[32];
+        byte[] c = new byte[32];
         BigInteger hu, hp;
 
         hu = ripemd160ToBigInteger(u.getBytes(), digest, ripemd);
@@ -58,7 +61,15 @@ public class ECKey extends CryptoUtil {
         digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
                 (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, 4, 64);
 
+        for (int i = 0; i < digest.length; i++) {
+            if (i < 32) {
+                k[i] = digest[i];
+            } else {
+                c[i % 32] = digest[i];
+            }
+        }
 
+        eck = new ECKey(k, c);
         return eck;
     }
 }
