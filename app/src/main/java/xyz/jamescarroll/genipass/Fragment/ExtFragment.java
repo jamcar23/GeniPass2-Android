@@ -17,6 +17,7 @@ import xyz.jamescarroll.genipass.R;
  * to handle interaction events.
  */
 public abstract class ExtFragment extends Fragment implements View.OnClickListener {
+    public static final String TAG = "ExtFragment.TAG";
 
     protected OnFragmentInteractionListener mListener;
 
@@ -86,5 +87,9 @@ public abstract class ExtFragment extends Fragment implements View.OnClickListen
      */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Intent frag);
+    }
+
+    public static String getTAG() {
+        return TAG;
     }
 }

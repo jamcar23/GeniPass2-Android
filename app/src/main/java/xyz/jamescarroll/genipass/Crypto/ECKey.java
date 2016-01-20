@@ -69,7 +69,7 @@ public class ECKey extends CryptoUtil {
             }
         }
 
-        eck = new ECKey(k, c);
+        eck = new ECKey(kCurve.getG().multiply(new BigInteger(k)).getEncoded(false), c);
         return eck;
     }
 }

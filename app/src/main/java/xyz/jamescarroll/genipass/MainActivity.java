@@ -3,6 +3,7 @@ package xyz.jamescarroll.genipass;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,16 +16,17 @@ import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
 import xyz.jamescarroll.genipass.Crypto.ECKey;
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
 import xyz.jamescarroll.genipass.Fragment.LoginFragment;
+import xyz.jamescarroll.genipass.Fragment.ServiceTagFragment;
 import xyz.jamescarroll.genipass.Fragment.StrengthTestFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ExtFragment.OnFragmentInteractionListener, AsyncMasterKeyGen.OnKeyGeneration {
-    public static final String kExtraFragmentTag = "xyx.jamescarroll.genipass.MainActivity." +
-            "EXTRA_FRAGMENT_TAG";
+        ExtFragment.OnFragmentInteractionListener, AsyncMasterKeyGen.OnKeyGeneration,
+        ServiceTagFragment.MasterKeyHolder {
 
     private ECKey mMaster;
-    private boolean mMasterFinsied;
+    private boolean mMasterBegin = false;
+    private boolean mMasterFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,12 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        mMasterFinsied = mMaster != null;
+        mMasterFinished = mMaster != null;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -93,12 +100,14 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_mng:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
-                        LoginFragment.TAG).commit();
+                if (mMasterFinished || mMasterBegin) {
+                    replaceFragment(findServiceTagFragment(), ServiceTagFragment.TAG);
+                } else {
+                    replaceFragment(findLoginFragment(), LoginFragment.TAG);
+                }
             break;
             case R.id.nav_tester:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findStrengthTestFragment(),
-                        StrengthTestFragment.TAG).commit();
+                replaceFragment(findStrengthTestFragment(), StrengthTestFragment.TAG);
                 break;
         }
 
@@ -109,13 +118,49 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Intent frag) {
+        ExtFragment f = null;
+        String t = "";
+
+        if (frag.hasExtra(IntentUtil.kExtraFragmentTag)) {
+            switch (frag.getStringExtra(IntentUtil.kExtraFragmentTag)) {
+                case LoginFragment.TAG:
+                    f = findLoginFragment();
+                    t = LoginFragment.TAG;
+                    break;
+                case StrengthTestFragment.TAG:
+                    f = findStrengthTestFragment();
+                    t = StrengthTestFragment.TAG;
+                    break;
+                case ServiceTagFragment.TAG:
+                    f = findServiceTagFragment();
+                    t = ServiceTagFragment.TAG;
+                    break;
+            }
+
+            if (f != null && !t.isEmpty()) {
+                replaceFragment(f, t);
+            }
+        }
+
+        if (frag.hasExtra(IntentUtil.kExtraMasterBegin)) {
+            mMasterBegin = frag.getBooleanExtra(IntentUtil.kExtraMasterBegin, false);
+        }
 
     }
 
     @Override
     public void onKeyGeneration(ECKey key) {
         this.mMaster = key;
-        this.mMasterFinsied = true;
+        this.mMasterFinished = true;
+    }
+
+    @Override
+    public ECKey getMasterKey() {
+        return mMaster;
+    }
+
+    private void replaceFragment(Fragment frag, String tag) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, frag, tag).commit();
     }
 
     private LoginFragment findLoginFragment() {
@@ -135,6 +180,17 @@ public class MainActivity extends AppCompatActivity
 
         if (stf == null) {
             stf = new StrengthTestFragment();
+        }
+
+        return stf;
+    }
+
+    private ServiceTagFragment findServiceTagFragment() {
+        ServiceTagFragment stf = (ServiceTagFragment) getSupportFragmentManager().
+                findFragmentByTag(ServiceTagFragment.TAG);
+
+        if (stf == null) {
+            stf = new ServiceTagFragment();
         }
 
         return stf;
