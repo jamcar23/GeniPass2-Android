@@ -26,8 +26,33 @@ public class Password {
     }
 
     private static int getCharSpaceSize(String s) {
-        // TODO actual calculations
-        return 26;
+        int count = 0;
+
+        if (s.matches(".*[a-z].*")) {
+            count += 26;
+        }
+
+        if (s.matches(".*[A-Z].*")) {
+            count += 26;
+        }
+
+        if (s.matches(".*[0-9].*")) {
+            count += 10;
+        }
+
+        if (s.matches(".*[!@#$%^&*()].*")) {
+            count += 10;
+        }
+
+        if (s.matches(".*[;:'<>,.?/~`].*")) {
+            count += 6;
+        }
+
+        if (s.matches(".*[ ].*")) {
+            ++count;
+        }
+
+        return count;
     }
 
     private static double[] calcFrequencyTable() {
@@ -107,6 +132,7 @@ public class Password {
 
         return p;
     }
+
 
     public static String pickPassword(byte[] bytes, Context context) {
         return pickPassword(bytesToHex(bytes), context);
