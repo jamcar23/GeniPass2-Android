@@ -17,4 +17,7 @@
     <string name="entropy">Entropy:</string>
     <string name="password_hint">Below is your password, the spaces are provided for easy read; it is up to you if you want to include them in your password, JUST BE CONSISITENT!</string>
     <string name="strength_frag_help">Enter a password below to test its strength as a password.</string>
+    <string name="service_tag_header">Enter the service and tag below. \n\nService: name of service of the password you want. \nTag: Optional text for multiple passwords per service.</string>
+    <string name="service">Service</string>
+    <string name="tag">Tag</string>
 </resources>
