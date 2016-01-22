@@ -1,17 +1,26 @@
 package xyz.jamescarroll.genipass.Crypto;
 
+import android.util.Log;
+
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.generators.SCrypt;
 
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by James Carroll on 1/19/16.
  */
 public class ECKey extends CryptoUtil {
-    private static final X9ECParameters kCurve = SECNamedCurves.getByName("secp521r1");
+    private static final String TAG = "ECKey.TAG";
+    private static final X9ECParameters kCurve = SECNamedCurves.getByName("secp256k1");
 
     private byte[] mKey;
     private byte[] mChain;
@@ -21,10 +30,30 @@ public class ECKey extends CryptoUtil {
         this.mChain = mChain;
     }
 
-    public void generateChildKey(String s) {
-        ECKey child;
+    public ECKey generateChildKey(String s) {
+        final String hmacSHA512 = "HmacSHA512";
+        ECKey child = null;
+        Mac hmac = null;
+        SecretKeySpec secret;
 
-        return;
+        try {
+             hmac = Mac.getInstance(hmacSHA512);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "generateChildKey: ", e);
+        }
+
+        if (hmac != null) {
+            secret = new SecretKeySpec(getmChain(), hmacSHA512);
+
+            try {
+                hmac.init(secret);
+                child = ECKey.splitDigestIntoECKey(hmac.doFinal(s.getBytes()));
+            } catch (InvalidKeyException e) {
+                Log.e(TAG, "generateChildKey: ", e);
+            }
+        }
+
+        return child;
     }
 
     public byte[] getmKey() {
@@ -46,12 +75,18 @@ public class ECKey extends CryptoUtil {
         return h;
     }
 
+    private static byte[] calcPublicKey(byte[] bytes) {
+        return kCurve.getG().multiply(new BigInteger(bytes)).getEncoded(true);
+    }
+
+    private static ECKey splitDigestIntoECKey(byte[] digest) {
+        return new ECKey(calcPublicKey(Arrays.copyOfRange(digest, 0, 32)),
+                calcPublicKey(Arrays.copyOfRange(digest, 32, 64)));
+    }
+
     public static ECKey genFromSeeds(String u, String p) {
-        ECKey eck;
         RIPEMD160Digest ripemd = new RIPEMD160Digest();
         byte[] digest = new byte[ripemd.getDigestSize()];
-        byte[] k = new byte[32];
-        byte[] c = new byte[32];
         BigInteger hu, hp;
 
         hu = ripemd160ToBigInteger(u.getBytes(), digest, ripemd);
@@ -61,15 +96,6 @@ public class ECKey extends CryptoUtil {
         digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
                 (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, 4, 64);
 
-        for (int i = 0; i < digest.length; i++) {
-            if (i < 32) {
-                k[i] = digest[i];
-            } else {
-                c[i % 32] = digest[i];
-            }
-        }
-
-        eck = new ECKey(kCurve.getG().multiply(new BigInteger(k)).getEncoded(false), c);
-        return eck;
+        return splitDigestIntoECKey(digest);
     }
 }

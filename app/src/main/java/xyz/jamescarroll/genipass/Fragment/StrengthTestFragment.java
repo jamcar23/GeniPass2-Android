@@ -2,7 +2,6 @@ package xyz.jamescarroll.genipass.Fragment;
 
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,8 +37,7 @@ public class StrengthTestFragment extends ExtFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((FloatingActionButton) findView(R.id.fab)).setImageDrawable(getResources().getDrawable(
-                R.drawable.ic_arrow_forward_24dp_white, getActivity().getTheme()));
+        setDrawableToFAB(R.drawable.ic_arrow_forward_24dp_white);
     }
 
     private void setTextToTextView(int view, String text) {

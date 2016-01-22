@@ -3,6 +3,7 @@ package xyz.jamescarroll.genipass.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 import android.view.View;
@@ -73,6 +74,11 @@ public abstract class ExtFragment extends Fragment implements View.OnClickListen
 
     protected String getTextFromEditText(int view) {
         return ((EditText) findView(view)).getText() + "";
+    }
+
+    protected void setDrawableToFAB(int drawable) {
+        ((FloatingActionButton) findView(R.id.fab)).setImageDrawable(getResources().getDrawable(
+                drawable, getActivity().getTheme()));
     }
 
     /**

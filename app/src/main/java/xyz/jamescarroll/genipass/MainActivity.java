@@ -1,5 +1,6 @@
 package xyz.jamescarroll.genipass;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,8 +26,10 @@ public class MainActivity extends AppCompatActivity
         ServiceTagFragment.MasterKeyHolder {
 
     private ECKey mMaster;
+    private ProgressDialog mProgress;
     private boolean mMasterBegin = false;
     private boolean mMasterFinished;
+    private boolean mRequestChildKeys = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.nav_mng:
-                if (mMasterFinished || mMasterBegin) {
+                if (mMasterBegin || mMasterFinished) {
                     replaceFragment(findServiceTagFragment(), ServiceTagFragment.TAG);
                 } else {
                     replaceFragment(findLoginFragment(), LoginFragment.TAG);
@@ -144,6 +147,15 @@ public class MainActivity extends AppCompatActivity
 
         if (frag.hasExtra(IntentUtil.kExtraMasterBegin)) {
             mMasterBegin = frag.getBooleanExtra(IntentUtil.kExtraMasterBegin, false);
+        } else if (frag.hasExtra(IntentUtil.kExtraChildBegin)) {
+            mRequestChildKeys = frag.getBooleanExtra(IntentUtil.kExtraChildBegin, false);
+            mProgress = new ProgressDialog(this);
+            mProgress.setTitle("Please Wait.");
+            mProgress.setMessage("Doing math.");
+            mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            mProgress.setCancelable(false);
+            mProgress.setCanceledOnTouchOutside(false);
+            mProgress.show();
         }
 
     }
@@ -152,11 +164,20 @@ public class MainActivity extends AppCompatActivity
     public void onKeyGeneration(ECKey key) {
         this.mMaster = key;
         this.mMasterFinished = true;
+
+        if (mRequestChildKeys) {
+            findServiceTagFragment().handleChildKeyDerivation();
+        }
     }
 
     @Override
     public ECKey getMasterKey() {
         return mMaster;
+    }
+
+    @Override
+    public boolean isMasterKeyFinished() {
+        return mMasterFinished;
     }
 
     private void replaceFragment(Fragment frag, String tag) {
