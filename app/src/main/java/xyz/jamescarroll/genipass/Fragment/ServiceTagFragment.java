@@ -55,9 +55,9 @@ public class ServiceTagFragment extends ExtFragment {
         }
     }
 
-    public String[] getServiceAndTagText() {
-        return new String[] {getTextFromEditText(R.id.et_service),
-                getTextFromEditText(R.id.et_tag)};
+    public void callAsyncChildKeyGen() {
+        new AsyncChildKeyGen(getActivity()).execute(getTextFromEditText(R.id.et_service),
+                getTextFromEditText(R.id.et_tag));
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ServiceTagFragment extends ExtFragment {
         switch (v.getId()) {
             case R.id.fab:
                 if (mHolder.isMasterKeyFinished()) {
-                    new AsyncChildKeyGen(getActivity()).execute();
+                    callAsyncChildKeyGen();
                 } else {
                     requestedChild = new Intent();
                     requestedChild.putExtra(IntentUtil.kExtraChildBegin, true);

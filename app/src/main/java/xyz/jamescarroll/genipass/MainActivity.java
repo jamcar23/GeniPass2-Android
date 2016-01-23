@@ -163,18 +163,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onKeyGeneration(ECKey key) {
-        String [] params;
 
         if (key.ismMaster()) {
             this.mMaster = key;
             this.mMasterFinished = true;
 
             if (mRequestChildKeys) {
-                params = findServiceTagFragment().getServiceAndTagText();
-                new AsyncChildKeyGen(this).execute(params[0], params[1]);
+                findServiceTagFragment().callAsyncChildKeyGen();
             }
         } else {
             mProgress.dismiss();
+
         }
     }
 
