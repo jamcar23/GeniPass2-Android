@@ -1,11 +1,14 @@
 package xyz.jamescarroll.genipass.Crypto;
 
+import android.content.Context;
 import android.util.Log;
+import android.util.TimingLogger;
 
 import org.bouncycastle.asn1.sec.SECNamedCurves;
 import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.generators.SCrypt;
+import org.bouncycastle.jcajce.provider.digest.Blake2b;
 
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -80,8 +83,15 @@ public class ECKey extends CryptoUtil {
     }
 
     private static ECKey splitDigestIntoECKey(byte[] digest) {
-        return new ECKey(calcPublicKey(Arrays.copyOfRange(digest, 0, 32)),
-                calcPublicKey(Arrays.copyOfRange(digest, 32, 64)));
+        Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
+        byte[] k = Arrays.copyOfRange(digest, 0, 32);
+        byte[] c = Arrays.copyOfRange(digest, 32, 64);
+
+        for (int i = 0; i < 32; i++) {
+            c = blake.digest(blake.digest(c));
+        }
+
+        return new ECKey(calcPublicKey(k), calcPublicKey(c));
     }
 
     public static ECKey genFromSeeds(String u, String p) {
@@ -94,8 +104,62 @@ public class ECKey extends CryptoUtil {
         ripemd.reset();
 
         digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
-                (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, 4, 64);
+                (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, 2, 64);
 
         return splitDigestIntoECKey(digest);
+    }
+
+    public static class ECTimeTest {
+
+        public static void timeTest(TimingLogger tl, Context context, int iter) {
+            RIPEMD160Digest ripemd = new RIPEMD160Digest();
+            byte[] digest = new byte[ripemd.getDigestSize()];
+            BigInteger hu, hp;
+            String u = Password.pickRandomPassword(context);
+            String p = Password.pickRandomPassword(context);
+
+            tl.addSplit("--- Begin iteration: " + iter + " ---");
+
+            hu = ripemd160ToBigInteger(u.getBytes(), digest, ripemd);
+            hp = ripemd160ToBigInteger(p.getBytes(), digest, ripemd);
+            ripemd.reset();
+
+            tl.addSplit("RIPEMD 160");
+            testSCrypt(2, tl, hu, hp);
+            testSCrypt(1, tl, hu, hp);
+        }
+
+        private static void testSCrypt(int p, TimingLogger tl, BigInteger hu, BigInteger hp) {
+            byte[] digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
+                    (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, p, 64);
+            tl.addSplit("SCrypt: 2^16, 8, " + p);
+
+            byte[] k = Arrays.copyOfRange(digest, 0, 32);
+            byte[] c = Arrays.copyOfRange(digest, 32, 64);
+            byte[] kc = k.clone();
+            byte[] cc = c.clone();
+
+            tl.addSplit("Split array");
+
+            splitDigestNoBlake(k, c);
+            tl.addSplit("split digest");
+
+            splitDigestBlake(kc, cc);
+            tl.addSplit("split digest - blake");
+        }
+
+        private static ECKey splitDigestNoBlake(byte[] k, byte[] c) {
+            return new ECKey(calcPublicKey(k), calcPublicKey(c));
+        }
+
+        private static ECKey splitDigestBlake(byte[] k, byte[] c) {
+            Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
+
+            for (int i = 0; i < 32; i++) {
+                c = blake.digest(blake.digest(c));
+            }
+
+            return new ECKey(calcPublicKey(k), calcPublicKey(c));
+        }
     }
 }
