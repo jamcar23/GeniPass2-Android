@@ -20,7 +20,7 @@ public class PasswordActivity extends AppCompatActivity implements ExtFragment.O
         setSupportActionBar(toolbar);
 
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag,
-                findPasswordFragment(null), PasswordFragment.TAG).commit();
+                findPasswordFragment(), PasswordFragment.TAG).commit();
         try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (NullPointerException e) {
@@ -29,15 +29,13 @@ public class PasswordActivity extends AppCompatActivity implements ExtFragment.O
 
     }
 
-    public PasswordFragment findPasswordFragment(byte[] bytes) {
+    public PasswordFragment findPasswordFragment() {
         PasswordFragment pf = (PasswordFragment) getSupportFragmentManager().findFragmentByTag(
                 PasswordFragment.TAG);
 
         if (pf == null) {
             pf = new PasswordFragment();
         }
-
-        pf.setmKey(bytes);
 
         return pf;
     }

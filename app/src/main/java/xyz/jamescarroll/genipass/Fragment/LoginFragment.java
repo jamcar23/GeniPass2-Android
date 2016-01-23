@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
+import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.IntentUtil;
 import xyz.jamescarroll.genipass.PasswordActivity;
 import xyz.jamescarroll.genipass.R;
@@ -40,14 +41,15 @@ public class LoginFragment extends ExtFragment {
     }
 
     private void handleLoginBtnClick() {
-        new AsyncMasterKeyGen(getActivity()).execute(getTextFromEditText(R.id.et_username),
+        KeyManager km = KeyManager.getInstance();
+        new AsyncMasterKeyGen().execute(getTextFromEditText(R.id.et_username),
                 getTextFromEditText(R.id.et_password));
+        km.setmMasterBegin(true);
+
         Intent toService = new Intent();
         toService.putExtra(IntentUtil.kExtraFragmentTag, ServiceTagFragment.TAG);
-        toService.putExtra(IntentUtil.kExtraMasterBegin, true);
 
         mListener.onFragmentInteraction(toService);
-
     }
 
     private void handleFabClick() {

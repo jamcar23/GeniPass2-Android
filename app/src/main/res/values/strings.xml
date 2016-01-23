@@ -20,4 +20,5 @@
     <string name="service_tag_header">Enter the service and tag below. \n\nService: name of service of the password you want. \nTag: Optional text for multiple passwords per service.</string>
     <string name="service">Service</string>
     <string name="tag">Tag</string>
+    <string name="logout">Logout</string>
 </resources>

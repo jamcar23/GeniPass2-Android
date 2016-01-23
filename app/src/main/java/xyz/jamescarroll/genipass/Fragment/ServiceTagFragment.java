@@ -1,8 +1,8 @@
 package xyz.jamescarroll.genipass.Fragment;
 
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,8 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import xyz.jamescarroll.genipass.Async.AsyncChildKeyGen;
-import xyz.jamescarroll.genipass.Async.AsyncChildKeyGen.MasterKeyHolder;
-import xyz.jamescarroll.genipass.IntentUtil;
+import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.R;
 
 ;
@@ -21,8 +20,7 @@ import xyz.jamescarroll.genipass.R;
  */
 public class ServiceTagFragment extends ExtFragment {
     public static final String TAG = "ServiceTagFragment.TAG";
-
-    private MasterKeyHolder mHolder;
+    private ProgressDialog mProgress;
 
 
     public ServiceTagFragment() {
@@ -42,36 +40,58 @@ public class ServiceTagFragment extends ExtFragment {
         super.onViewCreated(view, savedInstanceState);
 
         setDrawableToFAB(R.drawable.ic_arrow_forward_24dp_white);
+        KeyManager km = KeyManager.getInstance();
+
+        if (km.ismRequestChildKeys() && !km.isChildKeyFinished()) {
+            showProgressDialog();
+        }
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        if (context instanceof MasterKeyHolder) {
-            mHolder = (MasterKeyHolder) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement MasterKeyHolder.");
-        }
     }
 
     public void callAsyncChildKeyGen() {
-        new AsyncChildKeyGen(getActivity()).execute(getTextFromEditText(R.id.et_service),
+        new AsyncChildKeyGen().execute(getTextFromEditText(R.id.et_service),
                 getTextFromEditText(R.id.et_tag));
+    }
+
+    private void createProgressDialog() {
+        mProgress = new ProgressDialog(getActivity());
+        mProgress.setTitle("Doing Math.");
+        mProgress.setMessage("Please wait, this could take +30 seconds.");
+        mProgress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgress.setCancelable(false);
+        mProgress.setCanceledOnTouchOutside(false);
+    }
+
+    public void showProgressDialog() {
+        if (mProgress == null) {
+            createProgressDialog();
+        }
+
+        mProgress.show();
+    }
+
+    public void dismissProgressDialog() {
+        if (mProgress != null) {
+            mProgress.dismiss();
+        }
     }
 
     @Override
     public void onClick(View v) {
-        Intent requestedChild;
+        KeyManager km = KeyManager.getInstance();
 
         switch (v.getId()) {
             case R.id.fab:
-                if (mHolder.isMasterKeyFinished()) {
+                showProgressDialog();
+
+                if (km.isMasterKeyFinished()) {
                     callAsyncChildKeyGen();
                 } else {
-                    requestedChild = new Intent();
-                    requestedChild.putExtra(IntentUtil.kExtraChildBegin, true);
-                    mListener.onFragmentInteraction(requestedChild);
+                    km.setmRequestChildKeys(true);
                 }
 
                 break;

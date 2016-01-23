@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
+import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.Crypto.Password;
 import xyz.jamescarroll.genipass.R;
 
@@ -16,8 +19,6 @@ import xyz.jamescarroll.genipass.R;
  */
 public class PasswordFragment extends ExtFragment {
     public static final String TAG = "PasswordFragment.TAG";
-
-    private byte[] mKey;
 
 
     public PasswordFragment() {
@@ -45,23 +46,19 @@ public class PasswordFragment extends ExtFragment {
 
     private void handlePassword() {
         String p;
+        KeyManager km = KeyManager.getInstance();
 
-        if (getmKey() != null && getmKey().length > 0) {
-            p = Password.pickPassword(getmKey(), getActivity());
+        if (km.isChildKeyFinished()) {
+            findView(R.id.fab).setVisibility(View.INVISIBLE);
+            p = Password.pickPassword(Arrays.copyOfRange(km.getChildKey().getmKey(), 1, 33), getActivity());
+            km.clearChildKey();
         } else {
+            findView(R.id.fab).setVisibility(View.VISIBLE);
             p = Password.pickRandomPassword(getActivity());
         }
 
         setTexttoTextView(R.id.tv_password, p);
         setTexttoTextView(R.id.tv_entropy, "Entropy: " + Password.calcEntropy(p) + " bits");
-    }
-
-    public byte[] getmKey() {
-        return mKey;
-    }
-
-    public void setmKey(byte[] mKey) {
-        this.mKey = mKey;
     }
 
     @Override

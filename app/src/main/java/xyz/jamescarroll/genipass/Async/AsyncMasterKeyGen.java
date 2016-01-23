@@ -1,7 +1,5 @@
 package xyz.jamescarroll.genipass.Async;
 
-import android.content.Context;
-
 import xyz.jamescarroll.genipass.Crypto.ECKey;
 
 /**
@@ -9,9 +7,8 @@ import xyz.jamescarroll.genipass.Crypto.ECKey;
  */
 public class AsyncMasterKeyGen extends AsyncKeyGen {
 
-    public AsyncMasterKeyGen(Context context) {
+    public AsyncMasterKeyGen() {
         super();
-        setmListner(context);
     }
 
     @Override
@@ -21,6 +18,6 @@ public class AsyncMasterKeyGen extends AsyncKeyGen {
 
     @Override
     protected void onPostExecute(ECKey key) {
-        mListner.onKeyGeneration(key);
+        mListener.onKeyGeneration(key);
     }
 }
