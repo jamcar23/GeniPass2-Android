@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import xyz.jamescarroll.genipass.Async.AsyncChildKeyGen;
 import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
 import xyz.jamescarroll.genipass.Crypto.ECKey;
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
@@ -23,12 +24,12 @@ import xyz.jamescarroll.genipass.Fragment.StrengthTestFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ExtFragment.OnFragmentInteractionListener, AsyncMasterKeyGen.OnKeyGeneration,
-        ServiceTagFragment.MasterKeyHolder {
+        AsyncChildKeyGen.MasterKeyHolder {
 
     private ECKey mMaster;
     private ProgressDialog mProgress;
     private boolean mMasterBegin = false;
-    private boolean mMasterFinished;
+    private boolean mMasterFinished = false;
     private boolean mRequestChildKeys = false;
 
     @Override
@@ -162,11 +163,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onKeyGeneration(ECKey key) {
-        this.mMaster = key;
-        this.mMasterFinished = true;
+        String [] params;
 
-        if (mRequestChildKeys) {
-            findServiceTagFragment().handleChildKeyDerivation();
+        if (key.ismMaster()) {
+            this.mMaster = key;
+            this.mMasterFinished = true;
+
+            if (mRequestChildKeys) {
+                params = findServiceTagFragment().getServiceAndTagText();
+                new AsyncChildKeyGen(this).execute(params[0], params[1]);
+            }
+        } else {
+            mProgress.dismiss();
         }
     }
 

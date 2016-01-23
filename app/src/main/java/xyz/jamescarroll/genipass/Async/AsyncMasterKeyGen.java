@@ -1,19 +1,17 @@
 package xyz.jamescarroll.genipass.Async;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import xyz.jamescarroll.genipass.Crypto.ECKey;
 
 /**
  * Created by James Carroll on 1/20/16.
  */
-public class AsyncMasterKeyGen extends AsyncTask<String, Void, ECKey> {
-
-    private OnKeyGeneration mListner;
+public class AsyncMasterKeyGen extends AsyncKeyGen {
 
     public AsyncMasterKeyGen(Context context) {
-        this.mListner = (OnKeyGeneration) context;
+        super();
+        setmListner(context);
     }
 
     @Override
@@ -24,9 +22,5 @@ public class AsyncMasterKeyGen extends AsyncTask<String, Void, ECKey> {
     @Override
     protected void onPostExecute(ECKey key) {
         mListner.onKeyGeneration(key);
-    }
-
-    public interface OnKeyGeneration {
-        void onKeyGeneration(ECKey key);
     }
 }

@@ -27,6 +27,7 @@ public class ECKey extends CryptoUtil {
 
     private byte[] mKey;
     private byte[] mChain;
+    private boolean mMaster = false;
 
     private ECKey(byte[] mKey, byte[] mChain) {
         this.mKey = mKey;
@@ -67,6 +68,16 @@ public class ECKey extends CryptoUtil {
         return mChain;
     }
 
+    public boolean ismMaster() {
+        return mMaster;
+    }
+
+    private ECKey setmMaster(boolean mMaster) {
+        this.mMaster = mMaster;
+
+        return this;
+    }
+
     private static BigInteger ripemd160ToBigInteger(byte[] in, byte[] out, RIPEMD160Digest ripemd) {
         BigInteger h;
 
@@ -91,7 +102,7 @@ public class ECKey extends CryptoUtil {
             c = blake.digest(blake.digest(c));
         }
 
-        return new ECKey(calcPublicKey(k), calcPublicKey(c));
+        return new ECKey(calcPublicKey(k), c);
     }
 
     public static ECKey genFromSeeds(String u, String p) {
@@ -106,7 +117,7 @@ public class ECKey extends CryptoUtil {
         digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
                 (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, 2, 64);
 
-        return splitDigestIntoECKey(digest);
+        return splitDigestIntoECKey(digest).setmMaster(true);
     }
 
     public static class ECTimeTest {
@@ -126,25 +137,19 @@ public class ECKey extends CryptoUtil {
 
             tl.addSplit("RIPEMD 160");
             testSCrypt(2, tl, hu, hp);
-            testSCrypt(1, tl, hu, hp);
         }
 
         private static void testSCrypt(int p, TimingLogger tl, BigInteger hu, BigInteger hp) {
             byte[] digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
-                    (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, p, 64);
+                    (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16), 8, p, 64);
             tl.addSplit("SCrypt: 2^16, 8, " + p);
 
             byte[] k = Arrays.copyOfRange(digest, 0, 32);
             byte[] c = Arrays.copyOfRange(digest, 32, 64);
-            byte[] kc = k.clone();
-            byte[] cc = c.clone();
 
             tl.addSplit("Split array");
 
-            splitDigestNoBlake(k, c);
-            tl.addSplit("split digest");
-
-            splitDigestBlake(kc, cc);
+            splitDigestBlake(k, c);
             tl.addSplit("split digest - blake");
         }
 
@@ -155,7 +160,7 @@ public class ECKey extends CryptoUtil {
         private static ECKey splitDigestBlake(byte[] k, byte[] c) {
             Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
 
-            for (int i = 0; i < 32; i++) {
+            for (int i = 0; i < 256; i++) {
                 c = blake.digest(blake.digest(c));
             }
 

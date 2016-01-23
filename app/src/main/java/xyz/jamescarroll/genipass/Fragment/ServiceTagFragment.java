@@ -9,9 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import xyz.jamescarroll.genipass.Crypto.ECKey;
+import xyz.jamescarroll.genipass.Async.AsyncChildKeyGen;
+import xyz.jamescarroll.genipass.Async.AsyncChildKeyGen.MasterKeyHolder;
 import xyz.jamescarroll.genipass.IntentUtil;
 import xyz.jamescarroll.genipass.R;
+
+;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,38 +55,28 @@ public class ServiceTagFragment extends ExtFragment {
         }
     }
 
-    public ECKey handleChildKeyDerivation() {
-        final String s = getTextFromEditText(R.id.et_service);
-        final String t = getTextFromEditText(R.id.et_tag);
-        ECKey gen2, gen3 = null;
-        Intent requestedChild;
-
-        if (mHolder.isMasterKeyFinished()) {
-            gen2 = mHolder.getMasterKey().generateChildKey(s);
-
-            if (gen2 != null) {
-                gen3 = gen2.generateChildKey(t);
-            }
-        } else {
-            requestedChild = new Intent();
-            requestedChild.putExtra(IntentUtil.kExtraChildBegin, true);
-            mListener.onFragmentInteraction(requestedChild);
-        }
-
-        return gen3;
+    public String[] getServiceAndTagText() {
+        return new String[] {getTextFromEditText(R.id.et_service),
+                getTextFromEditText(R.id.et_tag)};
     }
 
     @Override
     public void onClick(View v) {
+        Intent requestedChild;
+
         switch (v.getId()) {
             case R.id.fab:
-                handleChildKeyDerivation();
+                if (mHolder.isMasterKeyFinished()) {
+                    new AsyncChildKeyGen(getActivity()).execute();
+                } else {
+                    requestedChild = new Intent();
+                    requestedChild.putExtra(IntentUtil.kExtraChildBegin, true);
+                    mListener.onFragmentInteraction(requestedChild);
+                }
+
                 break;
         }
     }
 
-    public interface MasterKeyHolder {
-        ECKey getMasterKey();
-        boolean isMasterKeyFinished();
-    }
+
 }
