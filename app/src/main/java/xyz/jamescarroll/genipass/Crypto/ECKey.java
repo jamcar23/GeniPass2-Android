@@ -97,10 +97,13 @@ public class ECKey extends CryptoUtil {
     private static ECKey splitDigestIntoECKey(byte[] digest) {
         SHA3.Digest256 sha = new SHA3.Digest256();
         byte[] k = Arrays.copyOfRange(digest, 0, 32);
-        byte[] c = Arrays.copyOfRange(digest, 32, 64);
+        byte[] c = new byte[33];
+
+        System.arraycopy(digest, 32, c, 0, 32);
 
         for (int i = 0; i < 256; i++) {
-            c = sha.digest(sha.digest(c));
+            c[32] = (byte) i;
+            System.arraycopy(sha.digest(sha.digest(c)), 0, c, 0, 32);
         }
 
         return new ECKey(calcPublicKey(k), c);
