@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
 import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.Crypto.Password;
-import xyz.jamescarroll.genipass.IntentUtil;
+import xyz.jamescarroll.genipass.MainActivity;
 import xyz.jamescarroll.genipass.PasswordActivity;
 import xyz.jamescarroll.genipass.R;
 
@@ -53,7 +53,7 @@ public class LoginFragment extends ExtFragment {
             km.setmMasterBegin(true);
 
             toService = new Intent();
-            toService.putExtra(IntentUtil.kExtraFragmentTag, ServiceTagFragment.TAG);
+            toService.putExtra(MainActivity.kExtraFragmentTag, ServiceTagFragment.TAG);
 
             mListener.onFragmentInteraction(toService);
         } else {

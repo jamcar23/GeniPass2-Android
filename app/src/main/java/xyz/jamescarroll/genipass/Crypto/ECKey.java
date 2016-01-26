@@ -9,6 +9,7 @@ import org.bouncycastle.asn1.x9.X9ECParameters;
 import org.bouncycastle.crypto.digests.RIPEMD160Digest;
 import org.bouncycastle.crypto.generators.SCrypt;
 import org.bouncycastle.jcajce.provider.digest.Blake2b;
+import org.bouncycastle.jcajce.provider.digest.SHA3;
 
 import java.math.BigInteger;
 import java.security.InvalidKeyException;
@@ -94,12 +95,12 @@ public class ECKey extends CryptoUtil {
     }
 
     private static ECKey splitDigestIntoECKey(byte[] digest) {
-        Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
+        SHA3.Digest256 sha = new SHA3.Digest256();
         byte[] k = Arrays.copyOfRange(digest, 0, 32);
         byte[] c = Arrays.copyOfRange(digest, 32, 64);
 
-        for (int i = 0; i < 32; i++) {
-            c = blake.digest(blake.digest(c));
+        for (int i = 0; i < 256; i++) {
+            c = sha.digest(sha.digest(c));
         }
 
         return new ECKey(calcPublicKey(k), c);
@@ -146,16 +147,23 @@ public class ECKey extends CryptoUtil {
 
             byte[] k = Arrays.copyOfRange(digest, 0, 32);
             byte[] c = Arrays.copyOfRange(digest, 32, 64);
+            byte[] kc = k.clone();
+            byte[] cc = c.clone();
 
             tl.addSplit("Split array");
 
             splitDigestBlake(k, c);
             tl.addSplit("split digest - blake");
+
+            splitDigestSha3(kc, cc);
+            tl.addSplit("split digest - sha3");
         }
 
         private static ECKey splitDigestNoBlake(byte[] k, byte[] c) {
             return new ECKey(calcPublicKey(k), calcPublicKey(c));
         }
+
+
 
         private static ECKey splitDigestBlake(byte[] k, byte[] c) {
             Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
@@ -164,7 +172,17 @@ public class ECKey extends CryptoUtil {
                 c = blake.digest(blake.digest(c));
             }
 
-            return new ECKey(calcPublicKey(k), calcPublicKey(c));
+            return new ECKey(calcPublicKey(k), c);
+        }
+
+        private static ECKey splitDigestSha3(byte[] k, byte[] c) {
+            SHA3.Digest256 sha = new SHA3.Digest256();
+
+            for (int i = 0; i < 256; i++) {
+                c = sha.digest(sha.digest(c));
+            }
+
+            return new ECKey(calcPublicKey(k), c);
         }
     }
 }

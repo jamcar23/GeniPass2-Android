@@ -40,6 +40,11 @@ public class PasswordFragment extends ExtFragment {
         handlePassword();
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
     private void setTexttoTextView(int view, String text) {
         ((TextView) findView(view)).setText(text);
     }

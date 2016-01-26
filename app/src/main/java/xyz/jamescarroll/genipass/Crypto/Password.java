@@ -111,7 +111,7 @@ public class Password extends CryptoUtil {
 
     public static String pickRandomPassword(Context context) {
         String p = "";
-        byte[] bytes = new byte[15];
+        byte[] bytes = new byte[16];
 
         while (calcEntropy(p) < 100) {
             kRand.nextBytes(bytes);

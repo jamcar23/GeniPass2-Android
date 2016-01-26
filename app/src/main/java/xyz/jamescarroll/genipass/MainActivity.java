@@ -1,5 +1,6 @@
 package xyz.jamescarroll.genipass;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -21,6 +23,7 @@ import xyz.jamescarroll.genipass.Fragment.StrengthTestFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ExtFragment.OnFragmentInteractionListener, KeyManager.ControlUI {
+    public static final String kExtraFragmentTag = "xyz.jamescarroll.genipass.MainActivity.EXTRA_FRAGMENT_TAG";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
+        handleMemoryRequirements();
         handleManagerFirstFragment();
     }
 
@@ -101,8 +105,8 @@ public class MainActivity extends AppCompatActivity
         ExtFragment f = null;
         String t = "";
 
-        if (frag.hasExtra(IntentUtil.kExtraFragmentTag)) {
-            switch (frag.getStringExtra(IntentUtil.kExtraFragmentTag)) {
+        if (frag.hasExtra(kExtraFragmentTag)) {
+            switch (frag.getStringExtra(kExtraFragmentTag)) {
                 case LoginFragment.TAG:
                     f = findLoginFragment();
                     t = LoginFragment.TAG;
@@ -137,6 +141,25 @@ public class MainActivity extends AppCompatActivity
     public void toPasswordActivity() {
         Intent toPasswordActivity = new Intent(this, PasswordActivity.class);
         startActivity(toPasswordActivity);
+    }
+
+    private void handleMemoryRequirements() {
+        long mem = Runtime.getRuntime().maxMemory();
+
+        if (mem < 188743680) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Error: Not Enough Memory!")
+                    .setMessage("Your device doesn't have enough memory to run GeniPass. " +
+                            "Try closing a few apps and relaunching GeniPass.")
+                    .setPositiveButton("Exit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    })
+                    .setCancelable(false)
+                    .show();
+        }
     }
 
     private void handleManagerFirstFragment() {

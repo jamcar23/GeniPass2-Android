@@ -10,10 +10,8 @@
     <string name="login">Login</string>
     <string name="genipass_welcome">Welcome to GeniPass, the password manager that generates your passwords on-the-fly without storing them.</string>
     <string name="manager">Manager</string>
-    <string name="test">Test</string>
+    <string name="test">Strength Tester</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="entropy">Entropy:</string>
     <string name="password_hint">Below is your password, the spaces are provided for easy read; it is up to you if you want to include them in your password, JUST BE CONSISITENT!</string>
     <string name="strength_frag_help">Enter a password below to test its strength as a password.</string>
