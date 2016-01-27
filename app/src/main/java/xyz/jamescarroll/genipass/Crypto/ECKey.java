@@ -51,29 +51,7 @@ public class ECKey extends CryptoUtil {
     }
 
     public ECKey generateChildKey(String s) {
-        final String hmacSHA512 = "HmacSHA512";
-        ECKey child = null;
-        Mac hmac = null;
-        SecretKeySpec secret;
-
-        try {
-             hmac = Mac.getInstance(hmacSHA512);
-        } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "generateChildKey: ", e);
-        }
-
-        if (hmac != null) {
-            secret = new SecretKeySpec(getmChain(), hmacSHA512);
-
-            try {
-                hmac.init(secret);
-                child = ECKey.splitDigestIntoECKey(hmac.doFinal(s.getBytes()));
-            } catch (InvalidKeyException e) {
-                Log.e(TAG, "generateChildKey: ", e);
-            }
-        }
-
-        return child;
+        return calcExtPublicKey(calcChildExtPrivate(getmChain(), s));
     }
 
     public byte[] getmKey() {
@@ -105,11 +83,36 @@ public class ECKey extends CryptoUtil {
         return h;
     }
 
+    private static byte[] calcChildExtPrivate(byte[] chain, String s) {
+        final String hmacSHA512 = "HmacSHA512";
+        Mac hmac = null;
+        SecretKeySpec secret;
+
+        try {
+            hmac = Mac.getInstance(hmacSHA512);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "generateChildKey: ", e);
+        }
+
+        if (hmac != null) {
+            secret = new SecretKeySpec(chain, hmacSHA512);
+
+            try {
+                hmac.init(secret);
+                return hmac.doFinal(s.getBytes());
+            } catch (InvalidKeyException e) {
+                Log.e(TAG, "generateChildKey: ", e);
+            }
+        }
+
+        return null;
+    }
+
     private static byte[] calcPublicKey(byte[] bytes) {
         return kCurve.getG().multiply(new BigInteger(bytes)).getEncoded(true);
     }
 
-    private static ECKey splitDigestIntoECKey(byte[] digest) {
+    private static ECKey calcExtPublicKey(byte[] digest) {
         SHA3.Digest256 sha = new SHA3.Digest256();
         byte[] k = Arrays.copyOfRange(digest, 0, 32);
         byte[] c = new byte[33];
@@ -124,6 +127,11 @@ public class ECKey extends CryptoUtil {
         return new ECKey(calcPublicKey(k), c);
     }
 
+    private static byte[] calcMasterExtPrivateKey(BigInteger u, BigInteger p) {
+        return SCrypt.generate((u.toString() + p.toString()).getBytes(),
+                (u.xor(p)).toByteArray(), (int) Math.pow(2, 16),  8, 2, 64);
+    }
+
     public static ECKey genFromSeeds(String u, String p) {
         RIPEMD160Digest ripemd = new RIPEMD160Digest();
         byte[] digest = new byte[ripemd.getDigestSize()];
@@ -133,10 +141,9 @@ public class ECKey extends CryptoUtil {
         hp = ripemd160ToBigInteger(p.getBytes(), digest, ripemd);
         ripemd.reset();
 
-        digest = SCrypt.generate((hu.toString() + hp.toString()).getBytes(),
-                (hu.xor(hp)).toByteArray(), (int) Math.pow(2, 16),  8, 2, 64);
+        digest = calcMasterExtPrivateKey(hu, hp);
 
-        return splitDigestIntoECKey(digest).setmMaster(true);
+        return calcExtPublicKey(digest).setmMaster(true);
     }
 
     public static class ECTimeTest {
@@ -201,6 +208,41 @@ public class ECKey extends CryptoUtil {
             }
 
             return new ECKey(calcPublicKey(k), c);
+        }
+    }
+
+    public static class UnitTest {
+
+        public static String ripemd160Hex(String s) {
+            RIPEMD160Digest ripe = new RIPEMD160Digest();
+            byte[] in = s.getBytes();
+            byte[] out = new byte[ripe.getDigestSize()];
+
+            ripe.update(in, 0, in.length);
+            ripe.doFinal(out, 0);
+
+            return bytesToHex(out);
+        }
+
+        public static String genMasterExtPrivateKey(String u, String p) {
+            BigInteger bu = new BigInteger(u, 16);
+            BigInteger bp = new BigInteger(p, 16);
+
+            return bytesToHex(calcMasterExtPrivateKey(bu, bp));
+        }
+
+        public static String genChildExtPrivatecKey(String par, String s) {
+            byte[] p = new BigInteger(par, 16).toByteArray();
+            byte[] cp = Arrays.copyOfRange(p, 32, 64);
+
+            return bytesToHex(calcChildExtPrivate(cp, s));
+        }
+
+        private static String genExtPublicKey(String pri) {
+            byte[] p = new BigInteger(pri, 16).toByteArray();
+            ECKey k = calcExtPublicKey(p);
+
+            return bytesToHex(k.getmKey()) + bytesToHex(k.getmChain());
         }
     }
 }
