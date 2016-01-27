@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2016
+ *
+ * This file, ECKey.java, is apart of GeniPass.
+ *
+ * GeniPass is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * GeniPass is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with GeniPass.  If not, see http://www.gnu.org/licenses/.
+ */
+
 package xyz.jamescarroll.genipass.Crypto;
 
 import android.content.Context;
@@ -19,9 +31,12 @@ import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+
 /**
  * Created by James Carroll on 1/19/16.
  */
+
+
 public class ECKey extends CryptoUtil {
     private static final String TAG = "ECKey.TAG";
     private static final X9ECParameters kCurve = SECNamedCurves.getByName("secp256k1");
