@@ -15,6 +15,8 @@ GeniPass is a deterministic password manager that uses child key derivation cryp
   - [Random Generation](#random-generation)
   - [Key Derivation](#key-derivation)
 - [Key Tree](#key-tree)
+- [Security](#security)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -108,3 +110,25 @@ For shorten notation I write CKD(CKD(m, s<sub>n</sub>), t<sub>n</sub>) as m/s<su
 Each leaf node in the tree corresponds to an actual public key (x coordinate on the curve), while the internal nodes correspond to the location of the branch needed to derive the leaf. The chain codes of leaf nodes are ignored as only their public key is needed to derive the password. 
 
 
+## Security 
+In addition to the expectations from the EC public-key cryptography itself:
+
+* Given a public key K, an attacker cannot find the corresponding private key more efficiently than by solving the EC discrete logarithm problem (assumed to require 2<sup>128</sup> group operations).
+
+the intended security properties of this cryptosystem are: 
+
+* Given an extended public key (K<sub>s</sub>, C<sub>s</sub>) and the string s, an  attacker cannot find the extend parent key (K<sub>p</sub>, C<sub>p</sub>) more efficiently than a 2<sup>256</sup> brute force of HMAC-SHA2-512.
+* Given any number of (string, extended public key) tuples (s<sub>t</sub>, K<sub>s<sub>t</sub></sub>, C<sub>s<sub>t</sub></sub>) with distinct s<sub>t</sub>'s, determining whether they are derived from a common parent extended public key (i.e, whether there exist a (K<sub>p</sub>, C<sub>p</sub>) such that for each t in (0...N-1) CKD((K<sub>p</sub>, C<sub>p</sub>), s<sub>t</sub>) = (K<sub>s<sub>t</sub></sub>, C<sub>s<sub>t</sub></sub>) cannot be done more efficiently than a 2<sup>256</sup> brute force of HMAC-SHA2-512.
+* Given a public chain code C an attacker cannot find the corresponding private chain code more efficiently than a 2<sup>128</sup> brute force of SHA-3 256. 
+
+## License 
+
+Copyright (c) 2015, 2016 James Carroll
+
+The full license is available in the [license](LICENSE) file.
+
+GeniPass is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+GeniPass is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with GeniPass.  If not, see <http://www.gnu.org/licenses/>.
