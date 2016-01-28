@@ -238,7 +238,7 @@ public class ECKey extends CryptoUtil {
             return bytesToHex(calcChildExtPrivate(cp, s));
         }
 
-        private static String genExtPublicKey(String pri) {
+        public static String genExtPublicKey(String pri) {
             byte[] p = new BigInteger(pri, 16).toByteArray();
             ECKey k = calcExtPublicKey(p);
 

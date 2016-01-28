@@ -15,6 +15,7 @@
     <PreferenceCategory
         android:title="@string/about">
         <PreferenceScreen
+            android:key="@string/btn_open_license"
             android:title="@string/open_source_license"
             android:persistent="false">
 

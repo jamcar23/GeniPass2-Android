@@ -12,15 +12,28 @@
 
 package xyz.jamescarroll.genipass;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
+import android.widget.TextView;
 
-import xyz.jamescarroll.genipass.Fragment.SettingsDetailFragment;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
-public class SettingsDetailActivity extends AppCompatActivity {
+import xyz.jamescarroll.genipass.Async.AsyncTestVector;
+import xyz.jamescarroll.genipass.Crypto.TestManager;
+
+
+public class SettingsDetailActivity extends AppCompatActivity implements AsyncTestVector.OnResult {
     private static final String TAG = "SettingsDetailActivity";
+    public static final String kExtraOpenLicense = TAG + ".OPEN_LICENSE";
+    public static final String kExtraTestVector = TAG + "TEST_VECTOR";
+
+    private ProgressDialog mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,25 +42,84 @@ public class SettingsDetailActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag,
-                findSettingsDetailFragment(), SettingsDetailFragment.TAG).commit();
-
         try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         } catch (NullPointerException e) {
             Log.e(TAG, "onCreate: ", e);
         }
-    }
 
-    private SettingsDetailFragment findSettingsDetailFragment() {
-        SettingsDetailFragment sdf = (SettingsDetailFragment) getSupportFragmentManager().
-                findFragmentByTag(SettingsDetailFragment.TAG);
+        findTextView().setMovementMethod(new ScrollingMovementMethod());
 
-        if (sdf == null) {
-            sdf = new SettingsDetailFragment();
+        if (getIntent() != null && getIntent().getAction() != null) {
+            if (getIntent().getAction().equals(kExtraOpenLicense)) {
+                handleOpenLicense();
+            }
+
+            if (getIntent().getAction().equals(kExtraTestVector)) {
+                showProgress();
+                TestManager.getInstance().setmStartTest(true);
+            }
         }
 
-        return sdf;
+        if (TestManager.getInstance().ismStartTest() && !TestManager.getInstance().ismEndTest()) {
+            showProgress();
+            new AsyncTestVector(this, this).execute();
+        }
+    }
+
+    private void createProgress() {
+        mProgress = new ProgressDialog(this);
+        mProgress.setTitle("Running Crypto Test");
+        mProgress.setMessage("Please wait.");
+        mProgress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        mProgress.setCanceledOnTouchOutside(false);
+        mProgress.setCancelable(false);
+        mProgress.setProgress(0);
+        mProgress.setMax(3);
+    }
+
+    private void showProgress() {
+        if (mProgress == null) {
+            createProgress();
+        }
+
+        mProgress.show();
+    }
+
+    private void handleOpenLicense() {
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                getResources().openRawResource(R.raw.license)));
+        String t, l = "";
+
+        try {
+            while ((t = br.readLine()) != null) {
+                l += t;
+            }
+
+            findTextView().setText(l);
+        } catch (IOException e) {
+            Log.e(TAG, "handleOpenLicense: ", e);
+        } finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                Log.e(TAG, "handleOpenLicense: ", e);
+            }
+        }
+    }
+
+    private TextView findTextView() {
+        return (TextView) findViewById(R.id.tv_settings_detail);
+    }
+
+    @Override
+    public void onResult(String result) {
+        findTextView().setText(result);
+        mProgress.dismiss();
+    }
+
+    @Override
+    public void onUpdate(int i) {
+        mProgress.setProgress(i);
     }
 }

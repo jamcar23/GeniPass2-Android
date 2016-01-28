@@ -32,6 +32,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.pref_debug);
+        findPreference(getString(R.string.btn_open_license)).setOnPreferenceClickListener(this);
         findPreference(getString(R.string.btn_test_vectors)).setOnPreferenceClickListener(this);
 
     }
@@ -41,8 +42,10 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         final String key = preference.getKey();
         Intent toDetail = new Intent(getActivity(), SettingsDetailActivity.class);
 
-        if (key.equals(getString(R.string.btn_test_vectors))) {
-
+        if (key.equals(getString(R.string.btn_open_license))) {
+            toDetail.setAction(SettingsDetailActivity.kExtraOpenLicense);
+        } else if (key.equals(getString(R.string.btn_test_vectors))) {
+            toDetail.setAction(SettingsDetailActivity.kExtraTestVector);
         }
 
         startActivity(toDetail);
