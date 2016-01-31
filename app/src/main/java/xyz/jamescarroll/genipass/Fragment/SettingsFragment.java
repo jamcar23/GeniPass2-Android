@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 
+import xyz.jamescarroll.genipass.Crypto.TestManager;
 import xyz.jamescarroll.genipass.R;
 import xyz.jamescarroll.genipass.SettingsDetailActivity;
 
@@ -42,6 +43,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         Intent toDetail = new Intent(getActivity(), SettingsDetailActivity.class);
 
         if (key.equals(getString(R.string.btn_test_vectors))) {
+            TestManager.getInstance().clearTest();
             toDetail.setAction(SettingsDetailActivity.kExtraTestVector);
         }
 

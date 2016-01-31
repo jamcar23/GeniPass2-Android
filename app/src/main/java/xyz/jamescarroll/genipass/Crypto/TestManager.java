@@ -47,8 +47,12 @@ public class TestManager {
     }
 
     public void endTest() {
-        this.mStartTest = false;
         this.mEndTest = true;
+    }
+
+    public void clearTest() {
+        this.mStartTest = false;
+        this.mEndTest = false;
     }
 
     public AsyncTestVector getmAsyncTestVector() {

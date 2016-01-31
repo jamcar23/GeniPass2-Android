@@ -27,7 +27,7 @@ import xyz.jamescarroll.genipass.Crypto.TestManager;
 
 public class SettingsDetailActivity extends AppCompatActivity implements AsyncTestVector.OnResult {
     private static final String TAG = "SettingsDetailActivity";
-    public static final String kExtraOpenLicense = TAG + ".OPEN_LICENSE";
+    public static final String kExtraDetail = TAG + ".DETAIL";
     public static final String kExtraTestVector = TAG + "TEST_VECTOR";
 
     private ProgressDialog mProgress;
@@ -48,6 +48,10 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         }
 
         findTextView().setMovementMethod(new ScrollingMovementMethod());
+
+        if (savedInstanceState != null) {
+            findTextView().setText(savedInstanceState.getString(kExtraDetail, ""));
+        }
 
         if (getIntent() != null && getIntent().getAction() != null) {
             if (getIntent().getAction().equals(kExtraTestVector)) {
@@ -72,6 +76,13 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putString(kExtraDetail, findTextView().getText() + "");
+    }
+
     private void createProgress() {
         mProgress = new ProgressDialog(this);
         mProgress.setTitle("Running Crypto Test");
@@ -90,7 +101,10 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
                     test.cancel(true);
                 }
 
+                TestManager.getInstance().endTest();
+
                 handleProgressOnResult();
+                finish();
             }
         });
     }

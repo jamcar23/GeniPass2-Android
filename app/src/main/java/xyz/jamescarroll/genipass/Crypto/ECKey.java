@@ -116,17 +116,15 @@ public class ECKey extends CryptoUtil {
         SHA3.Digest256 sha = new SHA3.Digest256();
         byte[] k = Arrays.copyOfRange(digest, 0, 32);
         byte[] c = new byte[33];
-        byte[] b = new byte[32];
 
         System.arraycopy(digest, 32, c, 0, 32);
 
         for (int i = 0; i < 256; i++) {
             c[32] = (byte) i;
-            b = sha.digest(sha.digest(c));
-            System.arraycopy(b, 0, c, 0, 32);
+            System.arraycopy(sha.digest(sha.digest(c)), 0, c, 0, 32);
         }
 
-        return new ECKey(calcPublicKey(k), b);
+        return new ECKey(calcPublicKey(k), Arrays.copyOfRange(c, 0, 32));
     }
 
     private static byte[] calcMasterExtPrivateKey(BigInteger u, BigInteger p) {
