@@ -105,7 +105,7 @@ Given a second generation extended public key (K, C) it is possible to derive a 
 * Return password
 
 ## Key Tree
-![Key Tree](GeniPassKeyTree.png)
+![Key Tree](imgs/GeniPassKeyTree.png)
 
 Above is the visual representation of key generation and password derivation. MKG() is defined in [Master Key Generation](#master-key-generation), CKD() is defined in [Child Key Derivation](#child-key-derivation), and PD() is defined in [Key Derivation](#key-derivation). 
 

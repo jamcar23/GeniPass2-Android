@@ -22,9 +22,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ExtFragment.OnFragmentInteractionListener, KeyManager.ControlUI {
     public static final String kExtraFragmentTag = "xyz.jamescarroll.genipass.MainActivity.EXTRA_FRAGMENT_TAG";
+    private boolean mVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,13 +86,21 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity_main in AndroidManifest.xml.
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                startActivity(new Intent(this, SettingsActivity.class));
-                return true;
             case R.id.action_logout:
                 KeyManager.getInstance().clear();
                 finish();
                 return true;
+            case R.id.action_visibility_toggle:
+                mVisible = !mVisible;
+                toggleVisibilityIcon();
+
+                if (findViewById(R.id.et_password) != null) {
+                    toggleEditTextVisibility(R.id.et_password);
+                } else if (findViewById(R.id.et_service) != null &&
+                        findViewById(R.id.et_tag) != null) {
+                    toggleEditTextVisibility(R.id.et_service);
+                    toggleEditTextVisibility(R.id.et_tag);
+                }
         }
 
         return super.onOptionsItemSelected(item);
@@ -105,6 +117,9 @@ public class MainActivity extends AppCompatActivity
             break;
             case R.id.nav_tester:
                 replaceFragment(findStrengthTestFragment(), StrengthTestFragment.TAG);
+                break;
+            case R.id.nav_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
         }
 
@@ -156,6 +171,25 @@ public class MainActivity extends AppCompatActivity
         startActivity(toPasswordActivity);
     }
 
+    private void toggleVisibilityIcon() {
+        ActionMenuItemView v = (ActionMenuItemView) findViewById(R.id.action_visibility_toggle);
+
+        if (v != null) {
+            v.setIcon(mVisible ? getDrawable(R.drawable.ic_visibility_off_24dp_white) :
+                    getDrawable(R.drawable.ic_visibility_24dp_white));
+        }
+    }
+
+    private void toggleEditTextVisibility(int view) {
+        if (mVisible) {
+            ((EditText) findViewById(view)).setInputType(
+                    InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
+        } else {
+            ((EditText) findViewById(view)).setInputType(
+                    InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        }
+    }
+
     private void handleMemoryRequirements() {
         long mem = Runtime.getRuntime().maxMemory();
 
@@ -184,6 +218,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void replaceFragment(Fragment frag, String tag) {
+        mVisible = false;
+        toggleVisibilityIcon();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, frag, tag).commit();
     }
 

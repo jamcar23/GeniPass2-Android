@@ -14,6 +14,7 @@ package xyz.jamescarroll.genipass.Crypto;
 
 import android.content.Context;
 
+import xyz.jamescarroll.genipass.Async.AsyncTestVector;
 import xyz.jamescarroll.genipass.R;
 
 /**
@@ -23,6 +24,7 @@ public class TestManager {
     private static TestManager ourInstance = new TestManager();
     private boolean mStartTest = false;
     private boolean mEndTest = false;
+    private AsyncTestVector mAsyncTestVector;
 
     public static TestManager getInstance() {
         return ourInstance;
@@ -35,35 +37,57 @@ public class TestManager {
         return mStartTest;
     }
 
-    public void setmStartTest(boolean mStartTest) {
-        this.mStartTest = mStartTest;
+    public void startTest() {
+        this.mStartTest = true;
+        this.mEndTest = false;
     }
 
     public boolean ismEndTest() {
         return mEndTest;
     }
 
-    public void setmEndTest(boolean mEndTest) {
-        this.mEndTest = mEndTest;
+    public void endTest() {
+        this.mStartTest = false;
+        this.mEndTest = true;
+    }
+
+    public AsyncTestVector getmAsyncTestVector() {
+        return mAsyncTestVector;
+    }
+
+    public void setmAsyncTestVector(AsyncTestVector mAsyncTestVector) {
+        this.mAsyncTestVector = mAsyncTestVector;
     }
 
     public Vector[] getTestVectors(Context context) {
         return new Vector[] {
-                new Vector("", "vector1", "facebook", "", context.getString(R.string.vec_username),
+                new Vector("", "immortal finnish dionaea cubical appallingly tips ", "facebook", "", context.getString(R.string.vec_username),
                         context.getString(R.string.vec1_password), context.getString(R.string.vec1_master_private),
                         context.getString(R.string.vec1_master_public), context.getString(R.string.vec1_first_child_private),
                         context.getString(R.string.vec1_first_child_public), context.getString(R.string.vec1_second_child_private),
-                        context.getString(R.string.vec1_second_child_public), "cyma nauseated fettuccine schlep arbitrariness evert "),
-                new Vector("", "vector2", "github", "alpha", context.getString(R.string.vec_username),
+                        context.getString(R.string.vec1_second_child_public), "gaskin slummock parasympathomimetic bashbazouk redbone canine "),
+                new Vector("", "autochthonous perdu gecko buckskin silliness thysanoptera ", "github", "alpha", context.getString(R.string.vec_username),
                         context.getString(R.string.vec2_password), context.getString(R.string.vec2_master_private),
                         context.getString(R.string.vec2_master_public), context.getString(R.string.vec2_first_child_private),
                         context.getString(R.string.vec2_first_child_public), context.getString(R.string.vec2_second_child_private),
-                        context.getString(R.string.vec2_second_child_public), "parulidae epona jaculate lamaist equalize quis "),
-                new Vector("", "vector3", "google", "main", context.getString(R.string.vec_username),
+                        context.getString(R.string.vec2_second_child_public), "ses homophonic regulate empetrum hilariously stuffy "),
+                new Vector("", "dyaus titillate roulade appelidage disputation penitentiary ", "google", "main", context.getString(R.string.vec_username),
                         context.getString(R.string.vec3_password), context.getString(R.string.vec3_master_private),
                         context.getString(R.string.vec3_master_public), context.getString(R.string.vec3_first_child_private),
                         context.getString(R.string.vec3_first_child_public), context.getString(R.string.vec3_second_child_private),
-                        context.getString(R.string.vec3_second_child_public), "sicence dapper rectitude beakless ievidelicet codling ")
+                        context.getString(R.string.vec3_second_child_public), "monario seraphina alimentative sauerkraut atropidae dictyoptera "),
+                new Vector("", "chronological malady denim drip existing hellenic ", "Twitter",
+                        "Some tag", context.getString(R.string.vec_username),
+                        context.getString(R.string.vec4_password), context.getString(R.string.vec4_master_private),
+                        context.getString(R.string.vec4_master_public), context.getString(R.string.vec4_first_child_private),
+                        context.getString(R.string.vec4_first_child_public), context.getString(R.string.vec4_second_child_private),
+                        context.getString(R.string.vec4_second_child_public), "glassblower hypobetalipoproteinemia ischiagra fastened gadoid bouncer "),
+                new Vector("", "louisiana ni-resist baltimore saprophyte guerilla blintz ",
+                        "Another site", "", context.getString(R.string.vec_username),
+                        context.getString(R.string.vec5_password), context.getString(R.string.vec5_master_private),
+                        context.getString(R.string.vec5_master_public), context.getString(R.string.vec5_first_child_private),
+                        context.getString(R.string.vec5_first_child_public), context.getString(R.string.vec5_second_child_private),
+                        context.getString(R.string.vec5_second_child_public), "char salis ship-breaker brydges trafalgar pure ")
         };
     }
 
@@ -187,5 +211,7 @@ public class TestManager {
         public String getmResult() {
             return mNumPass + " out of 9 passed. \n\n" + mResult;
         }
+
+
     }
 }

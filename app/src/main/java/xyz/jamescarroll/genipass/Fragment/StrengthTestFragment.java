@@ -61,6 +61,11 @@ public class StrengthTestFragment extends ExtFragment {
         int e = Password.calcEntropy(getTextFromEditText(R.id.et_password));
         String t = new PrettyTime().format(new Date((long) ((Password.calcTimeToCrack(e) * 1000) +
                 System.currentTimeMillis())));
+
+        if (e >= 70) {
+            t = "more than " + t;
+        }
+
         setTextToTextView(R.id.tv_entropy, "Entropy: " + e + " bits");
         setTextToTextView(R.id.tv_time, "Time needed to brute force password: " + t);
     }

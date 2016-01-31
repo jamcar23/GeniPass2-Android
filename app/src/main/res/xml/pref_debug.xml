@@ -14,12 +14,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
         android:title="@string/about">
-        <PreferenceScreen
-            android:key="@string/btn_open_license"
+        <Preference
             android:title="@string/open_source_license"
-            android:persistent="false">
-
-        </PreferenceScreen>
+            android:summary="@string/open_source_license_summary">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="@string/gpl_link" />
+        </Preference>
 
     </PreferenceCategory>
     <PreferenceCategory

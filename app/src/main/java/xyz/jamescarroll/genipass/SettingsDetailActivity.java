@@ -13,16 +13,13 @@
 package xyz.jamescarroll.genipass;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 
 import xyz.jamescarroll.genipass.Async.AsyncTestVector;
 import xyz.jamescarroll.genipass.Crypto.TestManager;
@@ -40,6 +37,8 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_detail);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        TestManager tm = TestManager.getInstance();
+
         setSupportActionBar(toolbar);
 
         try {
@@ -51,19 +50,25 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         findTextView().setMovementMethod(new ScrollingMovementMethod());
 
         if (getIntent() != null && getIntent().getAction() != null) {
-            if (getIntent().getAction().equals(kExtraOpenLicense)) {
-                handleOpenLicense();
-            }
-
             if (getIntent().getAction().equals(kExtraTestVector)) {
-                showProgress();
-                TestManager.getInstance().setmStartTest(true);
+                if (!tm.ismStartTest()) {
+                    showProgress();
+                    tm.startTest();
+                    tm.setmAsyncTestVector(new AsyncTestVector(this, this));
+                    tm.getmAsyncTestVector().execute();
+                }
             }
         }
 
-        if (TestManager.getInstance().ismStartTest() && !TestManager.getInstance().ismEndTest()) {
+        if (tm.ismStartTest() && !tm.ismEndTest()) {
             showProgress();
-            new AsyncTestVector(this, this).execute();
+            tm.getmAsyncTestVector().setmContext(this);
+            tm.getmAsyncTestVector().setmListener(this);
+            mProgress.setProgress(tm.getmAsyncTestVector().getmProgress());
+        }
+
+        if (tm.ismEndTest()) {
+            handleProgressOnResult();
         }
     }
 
@@ -75,7 +80,19 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         mProgress.setCanceledOnTouchOutside(false);
         mProgress.setCancelable(false);
         mProgress.setProgress(0);
-        mProgress.setMax(3);
+        mProgress.setMax(5);
+        mProgress.setButton(DialogInterface.BUTTON_POSITIVE, "Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                AsyncTestVector test = TestManager.getInstance().getmAsyncTestVector();
+
+                if (test != null && !test.isCancelled()) {
+                    test.cancel(true);
+                }
+
+                handleProgressOnResult();
+            }
+        });
     }
 
     private void showProgress() {
@@ -86,36 +103,22 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         mProgress.show();
     }
 
-    private void handleOpenLicense() {
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                getResources().openRawResource(R.raw.license)));
-        String t, l = "";
-
-        try {
-            while ((t = br.readLine()) != null) {
-                l += t;
-            }
-
-            findTextView().setText(l);
-        } catch (IOException e) {
-            Log.e(TAG, "handleOpenLicense: ", e);
-        } finally {
-            try {
-                br.close();
-            } catch (IOException e) {
-                Log.e(TAG, "handleOpenLicense: ", e);
-            }
-        }
-    }
-
     private TextView findTextView() {
         return (TextView) findViewById(R.id.tv_settings_detail);
+    }
+
+    private void handleProgressOnResult() {
+        TestManager.getInstance().setmAsyncTestVector(null);
+
+        if (mProgress != null) {
+            mProgress.dismiss();
+        }
     }
 
     @Override
     public void onResult(String result) {
         findTextView().setText(result);
-        mProgress.dismiss();
+        handleProgressOnResult();
     }
 
     @Override

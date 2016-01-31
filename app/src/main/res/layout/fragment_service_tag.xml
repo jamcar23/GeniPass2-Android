@@ -33,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/service"
-            android:inputType="textVisiblePassword"
+            android:inputType="textPassword"
             android:id="@+id/et_service"/>
 
         <EditText

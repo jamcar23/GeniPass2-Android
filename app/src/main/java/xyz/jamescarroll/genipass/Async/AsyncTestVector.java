@@ -28,6 +28,7 @@ import xyz.jamescarroll.genipass.Crypto.TestManager;
 public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
     private OnResult mListener;
     private Context mContext;
+    private int mProgress = 0;
 
     public AsyncTestVector(OnResult mListener, Context mContext) {
         this.mListener = mListener;
@@ -39,11 +40,10 @@ public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
         TestManager.Vector[] vectors = TestManager.getInstance().getTestVectors(mContext);
         TestManager.Vector vec;
         String result = "", u, p;
-        int j;
 
         for (int i = 0; i < vectors.length; i++) {
-            j = i + 1;
-            result += "--- Begin Test Vector " + j + " ---\n\n";
+            mProgress = i + 1;
+            result += "--- Begin Test Vector " + mProgress + " ---\n\n";
             vec = vectors[i];
 
             u = ECKey.UnitTest.ripemd160Hex(vec.getmUsername());
@@ -77,8 +77,8 @@ public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
                     64), mContext);
             vec.compareTo(u, vec.getmChildPassword(), TestManager.Vector.kGenPassword);
 
-            result += vec.getmResult() + "\n--- End Test Vector " + j + " ---\n\n";
-            publishProgress(j);
+            result += vec.getmResult() + "\n--- End Test Vector " + mProgress + " ---\n\n";
+            publishProgress(mProgress);
 
         }
 
@@ -96,7 +96,20 @@ public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
+        TestManager.getInstance().endTest();
         mListener.onResult(s);
+    }
+
+    public int getmProgress() {
+        return mProgress;
+    }
+
+    public void setmContext(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public void setmListener(OnResult mListener) {
+        this.mListener = mListener;
     }
 
     public interface OnResult {
