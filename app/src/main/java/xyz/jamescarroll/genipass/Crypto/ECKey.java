@@ -31,11 +31,17 @@ import java.util.Arrays;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+import xyz.jamescarroll.genipass.Async.AsyncKeyGenTimeTest;
+
 
 /**
  * Created by James Carroll on 1/19/16.
+ *
+ * A Class to define an elliptic curve extended key. It holds the normal public
+ * key and the public chain code. This also has method are child key derivation
+ * and testing. For more information on this crypto system, please see
+ * README.md.
  */
-
 
 public class ECKey extends CryptoUtil {
     private static final String TAG = "ECKey.TAG";
@@ -49,6 +55,15 @@ public class ECKey extends CryptoUtil {
         this.mKey = mKey;
         this.mChain = mChain;
     }
+
+    /**
+     * A public method to derive a child key from an ECKey object. The string
+     * should be either the service or tag depending on if its the 2nd or 3rd
+     * generation key respectively.
+     *
+     * @param s Either the service or tag.
+     * @return An extended public key object.
+     */
 
     public ECKey generateChildKey(String s) {
         return calcExtPublicKey(calcChildExtPrivate(getmChain(), s));
@@ -72,6 +87,18 @@ public class ECKey extends CryptoUtil {
         return this;
     }
 
+    /**
+     * Preforms the RIPEMD-160 hash of a byte array and returns the hash as a
+     * {@link BigInteger}.
+     *
+     * @param in input byte array to be hashed
+     * @param out Preallocated byte array to be used as the output multiple
+     *            times.
+     * @param ripemd Preallocated {@link RIPEMD160Digest} object to be used
+     *               multiple times.
+     * @return a BigInteger holding the value of the hash.
+     */
+
     private static BigInteger ripemd160ToBigInteger(byte[] in, byte[] out, RIPEMD160Digest ripemd) {
         BigInteger h;
 
@@ -82,6 +109,16 @@ public class ECKey extends CryptoUtil {
 
         return h;
     }
+
+    /**
+     * Calculates a child extended private key using HMAC-SHA2-512 using a
+     * parent chain code.
+     *
+     * @param chain parent chain code used as secret key in HMAC.
+     * @param s a string to be used as data to HMAC, this is either the service
+     *          or the tag.
+     * @return a byte array representing the child extended private key.
+     */
 
     private static byte[] calcChildExtPrivate(byte[] chain, String s) {
         final String hmacSHA512 = "HmacSHA512";
@@ -108,9 +145,25 @@ public class ECKey extends CryptoUtil {
         return null;
     }
 
+    /**
+     * Calculates a normal public key using the secp256k1 curve.
+     *
+     * @param bytes normal private key
+     * @return the x coordinate point
+     */
+
     private static byte[] calcPublicKey(byte[] bytes) {
         return kCurve.getG().multiply(new BigInteger(bytes)).getEncoded(true);
     }
+
+    /**
+     * Calculates the extended public key using calcPublicKey() for the normal
+     * public and 256 iterations of SHA3-256, hashing twice per iteration.
+     * It also appends the iteration number to the end before the first hash.
+     *
+     * @param digest the private key
+     * @return an ECKey object representing the extended public key.
+     */
 
     private static ECKey calcExtPublicKey(byte[] digest) {
         SHA3.Digest256 sha = new SHA3.Digest256();
@@ -127,10 +180,26 @@ public class ECKey extends CryptoUtil {
         return new ECKey(calcPublicKey(k), Arrays.copyOfRange(c, 0, 32));
     }
 
+    /**
+     * Calculates the master extended private key using SCrypt.
+     *
+     * @param u RIPEMD-160 hash of the username.
+     * @param p RIPEMD-160 hash of the master password.
+     * @return the SCrypt digest
+     */
+
     private static byte[] calcMasterExtPrivateKey(BigInteger u, BigInteger p) {
         return SCrypt.generate((u.toString() + p.toString()).getBytes(),
                 (u.xor(p)).toByteArray(), (int) Math.pow(2, 16),  8, 2, 64);
     }
+
+    /**
+     * Public method that generates the master extended public key.
+     *
+     * @param u the string of the username
+     * @param p the string of the master password.
+     * @return an ECKey object representing the master extended public key.
+     */
 
     public static ECKey genFromSeeds(String u, String p) {
         RIPEMD160Digest ripemd = new RIPEMD160Digest();
@@ -146,7 +215,23 @@ public class ECKey extends CryptoUtil {
         return calcExtPublicKey(digest).setmMaster(true);
     }
 
+    /**
+     * Inner static class for getting a rough estimate of how long crypto
+     * operations take on different devices. This inner class isn't actually
+     * in the production app, it's only used for debugging.
+     */
+
     public static class ECTimeTest {
+
+        /**
+         * Public method to begin the time test. This method is meant to be
+         * called inside a loop, see {@link AsyncKeyGenTimeTest}.
+         * @param tl Already initialized {@link TimingLogger} to be used to
+         *           keep track of time.
+         * @param context a {@link Context} needed to load the word list to
+         *                generate the passwords.
+         * @param iter the iteration number of the test
+         */
 
         public static void timeTest(TimingLogger tl, Context context, int iter) {
             RIPEMD160Digest ripemd = new RIPEMD160Digest();
@@ -210,6 +295,13 @@ public class ECKey extends CryptoUtil {
             return new ECKey(calcPublicKey(k), c);
         }
     }
+
+    /**
+     * Inner static class used for call static methods from ECKey one at a time
+     * so that they can be check against a set of hardcoded test vectors, see
+     * {@link TestManager}. This can be accessed in-app via Settings > Test
+     * Vectors. See the above static method in ECKey for comments.
+     */
 
     public static class UnitTest {
 

@@ -16,7 +16,13 @@ import xyz.jamescarroll.genipass.Async.AsyncKeyGen;
 
 /**
  * Created by James Carroll on 1/23/16.
+ *
+ * A class to manage the master key and 3rd child key outside of an activity
+ * or fragment. This also means I don't have to use an
+ * {@link android.content.Intent} to pass data. This class also manages how
+ * far along in the child password generation process the app is in.
  */
+
 public class KeyManager implements AsyncKeyGen.OnKeyGeneration {
     private static KeyManager ourInstance = new KeyManager();
     private ECKey mMaster = null;

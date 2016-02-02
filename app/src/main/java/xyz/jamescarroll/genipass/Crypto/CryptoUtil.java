@@ -17,6 +17,12 @@ package xyz.jamescarroll.genipass.Crypto;
  */
 public class CryptoUtil {
 
+    /**
+     * Converts an array of bytes to a string of hexadecimal.
+     * @param bytes Array of bytes to convert.
+     * @return hexadecimal string.
+     */
+
     protected static String bytesToHex(byte[] bytes) {
         char[] hexChar = "0123456789ABCDEF".toCharArray();
         char[] hexOut = new char[bytes.length * 2];
@@ -30,6 +36,12 @@ public class CryptoUtil {
 
         return new String(hexOut);
     }
+
+    /**
+     * Sets every value in a byte array to zero
+     * @param bytes Array to zero.
+     * @return
+     */
 
     protected static byte[] zeroByteArray(byte[] bytes) {
         for (int i = 0; i < bytes.length; i++) {

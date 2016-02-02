@@ -26,7 +26,10 @@ import xyz.jamescarroll.genipass.R;
 
 /**
  * Created by James Carroll on 1/15/16.
+ *
+ * A class used to manage password generation.
  */
+
 public class Password extends CryptoUtil {
     private static final String TAG = "Password.TAG";
     private static final SecureRandom kRand = new SecureRandom();

@@ -22,6 +22,12 @@
                 android:data="@string/gpl_link" />
         </Preference>
 
+        <PreferenceScreen
+            android:key="@string/btn_privacy"
+            android:title="@string/str_privacy_policy"
+            android:summary="@string/tldr_privacy_policy"
+            android:persistent="false" />
+
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/debug">

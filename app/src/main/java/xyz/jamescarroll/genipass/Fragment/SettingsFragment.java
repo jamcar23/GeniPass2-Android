@@ -34,6 +34,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
         addPreferencesFromResource(R.xml.pref_debug);
         findPreference(getString(R.string.btn_test_vectors)).setOnPreferenceClickListener(this);
+        findPreference(getString(R.string.btn_privacy)).setOnPreferenceClickListener(this);
 
     }
 
@@ -45,6 +46,8 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         if (key.equals(getString(R.string.btn_test_vectors))) {
             TestManager.getInstance().clearTest();
             toDetail.setAction(SettingsDetailActivity.kExtraTestVector);
+        } else if (key.equals(getString(R.string.btn_privacy))) {
+            toDetail.setAction(SettingsDetailActivity.kExtraPrivacyPolicy);
         }
 
         startActivity(toDetail);

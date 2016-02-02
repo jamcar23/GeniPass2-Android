@@ -193,7 +193,7 @@ public class MainActivity extends AppCompatActivity
     private void handleMemoryRequirements() {
         long mem = Runtime.getRuntime().maxMemory();
 
-        if (mem < 188743680) {
+        if (mem < 191889408) {
             new AlertDialog.Builder(this)
                     .setTitle("Error: Not Enough Memory!")
                     .setMessage("Your device doesn't have enough memory to run GeniPass. " +

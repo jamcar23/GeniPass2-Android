@@ -26,9 +26,10 @@ import xyz.jamescarroll.genipass.Crypto.TestManager;
 
 
 public class SettingsDetailActivity extends AppCompatActivity implements AsyncTestVector.OnResult {
-    private static final String TAG = "SettingsDetailActivity";
+    private static final String TAG = "xyz.jamescarroll.genipass.SettingsDetailActivity";
     public static final String kExtraDetail = TAG + ".DETAIL";
     public static final String kExtraTestVector = TAG + "TEST_VECTOR";
+    public static final String kExtraPrivacyPolicy = TAG + "PRIVACY_POLICY";
 
     private ProgressDialog mProgress;
 
@@ -47,8 +48,6 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
             Log.e(TAG, "onCreate: ", e);
         }
 
-        findTextView().setMovementMethod(new ScrollingMovementMethod());
-
         if (savedInstanceState != null) {
             findTextView().setText(savedInstanceState.getString(kExtraDetail, ""));
         }
@@ -61,6 +60,8 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
                     tm.setmAsyncTestVector(new AsyncTestVector(this, this));
                     tm.getmAsyncTestVector().execute();
                 }
+            } else if (getIntent().getAction().equals(kExtraPrivacyPolicy)) {
+                findTextView().setText(getString(R.string.privacy_policy));
             }
         }
 

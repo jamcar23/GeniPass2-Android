@@ -84,4 +84,8 @@
     <string name="password_visibility">Password Visibility</string>
     <string name="gpl_link">https://www.gnu.org/licenses/gpl.txt</string>
     <string name="open_source_license_summary">Opens the GNU General Public License V3 in a browser.</string>
+    <string name="privacy_policy">We don\'t store your data, period. \n\nWe physically can\'t: we have no server and GeniPass isn\'t allowed to use the internet (lacking permissions). Further more we don\'t even store your passwords on your device so there\'s no data to worry about.</string>
+    <string name="btn_privacy">btn_privacy_policy</string>
+    <string name="str_privacy_policy">Privacy Policy</string>
+    <string name="tldr_privacy_policy">tl;dr: We don\'t store anything anywhere.</string>
 </resources>
