@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright (c) 2016
+  ~
+  ~ This file, fragment_about.xml, is apart of GeniPass.
+  ~
+  ~ GeniPass is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+  ~
+  ~ GeniPass is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along with GeniPass.  If not, see http://www.gnu.org/licenses/.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="xyz.jamescarroll.genipass.Fragment.AboutFragment"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:gravity="center">
+
+        <ImageView
+            android:layout_width="420dp"
+            android:layout_height="420dp"
+            android:maxHeight="420dp"
+            android:maxWidth="420dp"
+            android:src="@drawable/app_icon_no_bg"/>
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textSize="42sp"
+        android:fontFamily="@string/roboto_thin"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:gravity="center">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/about_detail"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/activity_vertical_margin_2x"/>
+    </RelativeLayout>
+
+
+
+</LinearLayout>

@@ -27,6 +27,11 @@
     <PreferenceCategory
         android:title="@string/about">
         <Preference
+            android:key="@string/btn_about"
+            android:title="@string/about_txt"
+            android:summary="@string/about_summary"
+            android:persistent="false" />
+        <Preference
             android:title="@string/open_source_license"
             android:summary="@string/open_source_license_summary">
             <intent

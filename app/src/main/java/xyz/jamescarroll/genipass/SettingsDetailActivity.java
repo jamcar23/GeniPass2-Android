@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import xyz.jamescarroll.genipass.Async.AsyncTestVector;
 import xyz.jamescarroll.genipass.Crypto.TestManager;
+import xyz.jamescarroll.genipass.Fragment.AboutFragment;
 import xyz.jamescarroll.genipass.Fragment.ScrollDetailFragment;
 
 
@@ -31,6 +32,7 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
     public static final String kExtraDetail = TAG + ".DETAIL";
     public static final String kExtraTestVector = TAG + "TEST_VECTOR";
     public static final String kExtraPrivacyPolicy = TAG + "PRIVACY_POLICY";
+    public static final String kExtraAbout = TAG + "ABOUT";
 
     private ProgressDialog mProgress;
 
@@ -65,6 +67,8 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
                 replaceFragment(findScrollDetailFragment(getString(R.string.privacy_policy)),
                         ScrollDetailFragment.TAG);
 
+            } else if (getIntent().getAction().equals(kExtraAbout)) {
+                replaceFragment(findAboutFragment(), AboutFragment.TAG);
             }
         }
 
@@ -85,7 +89,7 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         super.onSaveInstanceState(outState);
 
         if (findTextView() != null) {
-            outState.putString(kExtraDetail,  findTextView().getText() + "");
+            outState.putString(kExtraDetail, findTextView().getText() + "");
         }
     }
 
@@ -149,6 +153,17 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         }
 
         return sdf;
+    }
+
+    private AboutFragment findAboutFragment() {
+        AboutFragment af = (AboutFragment) getSupportFragmentManager().findFragmentByTag(
+                AboutFragment.TAG);
+
+        if (af == null) {
+            af = new AboutFragment();
+        }
+
+        return af;
     }
 
     @Override

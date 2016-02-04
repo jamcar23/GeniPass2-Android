@@ -112,4 +112,9 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="about_txt">About</string>
+    <string name="about_summary">Info about the app and developer.</string>
+    <string name="btn_about">btn_about</string>
+    <string name="roboto_thin">sans-serif-thin</string>
+    <string name="about_detail">GeniPass is made by James Carroll. \nIcon made by Loreanne Varon.</string>
 </resources>
