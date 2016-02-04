@@ -14,6 +14,8 @@ package xyz.jamescarroll.genipass;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -29,6 +31,7 @@ import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
@@ -59,6 +62,11 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
+
+        ImageView iv = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.iv_nav_cover);
+        Bitmap b = Bitmap.createScaledBitmap(((BitmapDrawable) getDrawable(R.drawable.genipass_header)).
+                getBitmap(), iv.getMaxWidth(), iv.getMaxHeight(), false);
+        iv.setImageBitmap(b);
 
         handleMemoryRequirements();
         handleManagerFirstFragment();
