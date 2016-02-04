@@ -297,7 +297,7 @@ public class ECKey extends CryptoUtil {
     }
 
     /**
-     * Inner static class used for call static methods from ECKey one at a time
+     * Inner static class used to call static methods from ECKey one at a time
      * so that they can be check against a set of hardcoded test vectors, see
      * {@link TestManager}. This can be accessed in-app via Settings > Test
      * Vectors. See the above static method in ECKey for comments.

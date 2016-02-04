@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -169,6 +170,19 @@ public class MainActivity extends AppCompatActivity
     public void toPasswordActivity() {
         Intent toPasswordActivity = new Intent(this, PasswordActivity.class);
         startActivity(toPasswordActivity);
+    }
+
+    @Override
+    public void handleLogOut() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
+                LoginFragment.TAG).commitAllowingStateLoss();
+
+
+        try {
+            Snackbar.make(getCurrentFocus(), "User has been logged out.", Snackbar.LENGTH_SHORT).show();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
     private void toggleVisibilityIcon() {

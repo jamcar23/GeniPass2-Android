@@ -12,6 +12,8 @@
 
 package xyz.jamescarroll.genipass.Crypto;
 
+import android.os.Handler;
+
 import xyz.jamescarroll.genipass.Async.AsyncKeyGen;
 
 /**
@@ -23,13 +25,14 @@ import xyz.jamescarroll.genipass.Async.AsyncKeyGen;
  * far along in the child password generation process the app is in.
  */
 
-public class KeyManager implements AsyncKeyGen.OnKeyGeneration {
+public class KeyManager implements AsyncKeyGen.OnKeyGeneration, Runnable {
     private static KeyManager ourInstance = new KeyManager();
     private ECKey mMaster = null;
     private ECKey mChild = null;
     private ControlUI mControl;
     private boolean mMasterBegin = false;
     private boolean mRequestChildKeys = false;
+    private Handler mHandler;
 
     private KeyManager() {
     }
@@ -80,6 +83,8 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration {
         mMaster = null;
         mControl = null;
         mMasterBegin = false;
+        mHandler.removeCallbacks(this);
+        mHandler = null;
     }
 
     public void setmControl(ControlUI mControl) {
@@ -92,6 +97,22 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration {
 
     public boolean isChildKeyFinished() {
         return mChild != null && mChild.getmKey() != null && mChild.getmKey().length > 0;
+    }
+
+    public void beginTimeOut(String time) {
+        int t = 0;
+
+        try {
+            t = Integer.parseInt(time);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        if (t != 0) {
+            t *= 60000;
+            mHandler = new Handler();
+            mHandler.postDelayed(this, t);
+        }
     }
 
     @Override
@@ -111,9 +132,19 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration {
         }
     }
 
+    @Override
+    public void run() {
+        if (mControl != null) {
+            mControl.handleLogOut();
+        }
+
+        clear();
+    }
+
     public interface ControlUI {
         void callAsyncChildKeyGen();
         void dismissProgressDialog();
         void toPasswordActivity();
+        void handleLogOut();
     }
 }

@@ -13,6 +13,18 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
+        android:title="@string/tweak">
+        <ListPreference
+            android:key="@string/lp_timeout"
+            android:title="@string/time_out"
+            android:summary="@string/time_out_summary"
+            android:entries="@array/time_out_entries"
+            android:entryValues="@array/time_out_values"
+            android:defaultValue="@string/fifteen" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/about">
         <Preference
             android:title="@string/open_source_license"
@@ -27,8 +39,8 @@
             android:title="@string/str_privacy_policy"
             android:summary="@string/tldr_privacy_policy"
             android:persistent="false" />
-
     </PreferenceCategory>
+
     <PreferenceCategory
         android:title="@string/debug">
         <PreferenceScreen

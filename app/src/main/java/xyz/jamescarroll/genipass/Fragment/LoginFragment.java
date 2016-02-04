@@ -14,6 +14,7 @@ package xyz.jamescarroll.genipass.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -58,6 +59,7 @@ public class LoginFragment extends ExtFragment {
     private void handleLoginBtnClick() {
         KeyManager km = KeyManager.getInstance();
         String p = getTextFromEditText(R.id.et_password);
+        String t;
         Intent toService;
 
         if (Password.calcEntropy(p) >= 100) {
@@ -68,6 +70,13 @@ public class LoginFragment extends ExtFragment {
             toService.putExtra(MainActivity.kExtraFragmentTag, ServiceTagFragment.TAG);
 
             mListener.onFragmentInteraction(toService);
+
+            t = PreferenceManager.getDefaultSharedPreferences(getActivity()).
+                    getString(getString(R.string.lp_timeout), "");
+
+            if (!t.equals("0")) {
+                KeyManager.getInstance().beginTimeOut("1");
+            }
         } else {
             if (mAlert == null) {
                 mAlert = new AlertDialog.Builder(getActivity())
