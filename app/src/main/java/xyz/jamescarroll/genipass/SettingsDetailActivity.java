@@ -15,18 +15,19 @@ package xyz.jamescarroll.genipass;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
 
 import xyz.jamescarroll.genipass.Async.AsyncTestVector;
 import xyz.jamescarroll.genipass.Crypto.TestManager;
+import xyz.jamescarroll.genipass.Fragment.ScrollDetailFragment;
 
 
 public class SettingsDetailActivity extends AppCompatActivity implements AsyncTestVector.OnResult {
-    private static final String TAG = "xyz.jamescarroll.genipass.SettingsDetailActivity";
+    private static final String TAG = "SettingsDetailActivity.TAG";
     public static final String kExtraDetail = TAG + ".DETAIL";
     public static final String kExtraTestVector = TAG + "TEST_VECTOR";
     public static final String kExtraPrivacyPolicy = TAG + "PRIVACY_POLICY";
@@ -48,7 +49,7 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
             Log.e(TAG, "onCreate: ", e);
         }
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && findTextView() != null) {
             findTextView().setText(savedInstanceState.getString(kExtraDetail, ""));
         }
 
@@ -61,7 +62,9 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
                     tm.getmAsyncTestVector().execute();
                 }
             } else if (getIntent().getAction().equals(kExtraPrivacyPolicy)) {
-                findTextView().setText(getString(R.string.privacy_policy));
+                replaceFragment(findScrollDetailFragment(getString(R.string.privacy_policy)),
+                        ScrollDetailFragment.TAG);
+
             }
         }
 
@@ -81,7 +84,9 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putString(kExtraDetail, findTextView().getText() + "");
+        if (findTextView() != null) {
+            outState.putString(kExtraDetail,  findTextView().getText() + "");
+        }
     }
 
     private void createProgress() {
@@ -130,9 +135,25 @@ public class SettingsDetailActivity extends AppCompatActivity implements AsyncTe
         }
     }
 
+    private void replaceFragment(Fragment fragment, String tag) {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, fragment, tag).
+                commitAllowingStateLoss();
+    }
+
+    private ScrollDetailFragment findScrollDetailFragment(String detail) {
+        ScrollDetailFragment sdf = (ScrollDetailFragment) getSupportFragmentManager().
+                findFragmentByTag(ScrollDetailFragment.TAG);
+
+        if (sdf == null) {
+            sdf = ScrollDetailFragment.newInstance(detail);
+        }
+
+        return sdf;
+    }
+
     @Override
     public void onResult(String result) {
-        findTextView().setText(result);
+        replaceFragment(findScrollDetailFragment(result), ScrollDetailFragment.TAG);
         handleProgressOnResult();
     }
 
