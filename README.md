@@ -26,7 +26,7 @@ GeniPass is a deterministic password manager that uses child key derivation cryp
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-![GeniPass](imgs/GeniPassHeader_.png)
+![GeniPass](imgs/GeniPassHeader_app.png)
 
 ## Usage 
 
