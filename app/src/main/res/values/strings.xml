@@ -88,4 +88,25 @@
     <string name="btn_privacy">btn_privacy_policy</string>
     <string name="str_privacy_policy">Privacy Policy</string>
     <string name="tldr_privacy_policy">tl;dr: We don\'t store anything anywhere.</string>
+    <string name="tweak">Tweak</string>
+    <string name="time_out">Time Out</string>
+    <string name="time_out_summary">Set the length of time before app logs you out (default 15 minutes.)</string>
+    <string name="fifteen">15</string>
+    <string name="lp_timeout">lp_timeout</string>
+
+    <string-array name="time_out_entries">
+        <item>Never</item>
+        <item>15 Min</item>
+        <item>30 Min</item>
+        <item>45 Min</item>
+        <item>1 Hour</item>
+    </string-array>
+
+    <string-array name="time_out_values">
+        <item>0</item>
+        <item>15</item>
+        <item>30</item>
+        <item>45</item>
+        <item>60</item>
+    </string-array>
 </resources>
