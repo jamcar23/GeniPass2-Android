@@ -83,8 +83,11 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration, Runnable {
         mMaster = null;
         mControl = null;
         mMasterBegin = false;
-        mHandler.removeCallbacks(this);
-        mHandler = null;
+
+        if (mHandler != null) {
+            mHandler.removeCallbacks(this);
+            mHandler = null;
+        }
     }
 
     public void setmControl(ControlUI mControl) {

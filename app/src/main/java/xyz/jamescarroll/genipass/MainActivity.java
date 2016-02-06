@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.Fragment.ExtFragment;
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity
         ExtFragment.OnFragmentInteractionListener, KeyManager.ControlUI {
     public static final String kExtraFragmentTag = "xyz.jamescarroll.genipass.MainActivity.EXTRA_FRAGMENT_TAG";
     private boolean mVisible = false;
+    private AlertDialog mAlert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,8 +98,7 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity_main in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_logout:
-                KeyManager.getInstance().clear();
-                finish();
+                showAlert();
                 return true;
             case R.id.action_visibility_toggle:
                 mVisible = !mVisible;
@@ -185,11 +186,9 @@ public class MainActivity extends AppCompatActivity
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
                 LoginFragment.TAG).commitAllowingStateLoss();
 
-
-        try {
-            Snackbar.make(getCurrentFocus(), "User has been logged out.", Snackbar.LENGTH_SHORT).show();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        if (getCurrentFocus() != null) {
+            Snackbar.make(getCurrentFocus(), "User has been logged out.", Snackbar.LENGTH_SHORT).
+                    show();
         }
     }
 
@@ -276,5 +275,25 @@ public class MainActivity extends AppCompatActivity
         }
 
         return stf;
+    }
+
+    private void showAlert() {
+        if (mAlert == null) {
+            mAlert = new AlertDialog.Builder(this)
+                    .setTitle("Logout?")
+                    .setMessage("Would you like to close GeniPass and logout?")
+                    .setNegativeButton("No", null)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            KeyManager.getInstance().clear();
+                            Toast.makeText(MainActivity.this, "Goodbye", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    })
+                    .create();
+        }
+
+        mAlert.show();
     }
 }

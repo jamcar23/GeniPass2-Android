@@ -18,9 +18,11 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.TypedValue;
+import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
 
+import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.R;
 
 /**
@@ -43,6 +45,7 @@ public abstract class ExtFragment extends Fragment implements View.OnClickListen
         super.onViewCreated(view, savedInstanceState);
 
         findView(R.id.fab).setOnClickListener(this);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -53,6 +56,15 @@ public abstract class ExtFragment extends Fragment implements View.OnClickListen
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if (menu.findItem(R.id.action_logout) != null) {
+            menu.findItem(R.id.action_logout).setVisible(KeyManager.getInstance().ismMasterBegin());
         }
     }
 
