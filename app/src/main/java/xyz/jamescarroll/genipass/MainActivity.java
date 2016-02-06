@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ExtFragment.OnFragmentInteractionListener, KeyManager.ControlUI {
     public static final String kExtraFragmentTag = "xyz.jamescarroll.genipass.MainActivity.EXTRA_FRAGMENT_TAG";
-    private boolean mVisible = false;
+    private boolean mEditTextVisible = false;
+    private boolean mThisVisibile = false;
     private AlertDialog mAlert;
 
     @Override
@@ -75,6 +76,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        mThisVisibile = true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        mThisVisibile = false;
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -101,7 +116,7 @@ public class MainActivity extends AppCompatActivity
                 showAlert();
                 return true;
             case R.id.action_visibility_toggle:
-                mVisible = !mVisible;
+                mEditTextVisible = !mEditTextVisible;
                 toggleVisibilityIcon();
 
                 if (findViewById(R.id.et_password) != null) {
@@ -183,12 +198,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void handleLogOut() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
-                LoginFragment.TAG).commitAllowingStateLoss();
+        if (!mThisVisibile) {
+            Intent popAll = new Intent(this, MainActivity.class);
+            popAll.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(popAll);
+        } else {
+            getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, findLoginFragment(),
+                    LoginFragment.TAG).commitAllowingStateLoss();
 
-        if (getCurrentFocus() != null) {
-            Snackbar.make(getCurrentFocus(), "User has been logged out.", Snackbar.LENGTH_SHORT).
-                    show();
+            if (getCurrentFocus() != null) {
+                Snackbar.make(getCurrentFocus(), "User has been logged out.", Snackbar.LENGTH_SHORT).
+                        show();
+            }
         }
     }
 
@@ -196,13 +217,13 @@ public class MainActivity extends AppCompatActivity
         ActionMenuItemView v = (ActionMenuItemView) findViewById(R.id.action_visibility_toggle);
 
         if (v != null) {
-            v.setIcon(mVisible ? getDrawable(R.drawable.ic_visibility_off_24dp_white) :
+            v.setIcon(mEditTextVisible ? getDrawable(R.drawable.ic_visibility_off_24dp_white) :
                     getDrawable(R.drawable.ic_visibility_24dp_white));
         }
     }
 
     private void toggleEditTextVisibility(int view) {
-        if (mVisible) {
+        if (mEditTextVisible) {
             ((EditText) findViewById(view)).setInputType(
                     InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
         } else {
@@ -239,7 +260,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void replaceFragment(Fragment frag, String tag) {
-        mVisible = false;
+        mEditTextVisible = false;
         toggleVisibilityIcon();
         getSupportFragmentManager().beginTransaction().replace(R.id.fl_frag, frag, tag).commit();
     }

@@ -75,7 +75,7 @@ public class LoginFragment extends ExtFragment {
                     getString(getString(R.string.lp_timeout), "");
 
             if (!t.equals("0")) {
-                KeyManager.getInstance().beginTimeOut("1");
+                KeyManager.getInstance().beginTimeOut(t);
             }
         } else {
             if (mAlert == null) {
