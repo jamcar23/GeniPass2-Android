@@ -14,10 +14,13 @@ package xyz.jamescarroll.genipass.Fragment;
 
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.Arrays;
@@ -29,8 +32,10 @@ import xyz.jamescarroll.genipass.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PasswordFragment extends ExtFragment {
+public class PasswordFragment extends ExtFragment implements CompoundButton.OnCheckedChangeListener {
     public static final String TAG = "PasswordFragment.TAG";
+    private char[] mChars;
+    private boolean mSpaces;
 
 
     public PasswordFragment() {
@@ -49,7 +54,20 @@ public class PasswordFragment extends ExtFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        handlePassword();
+        Switch s = ((Switch) findView(R.id.s_toggle_space));
+        mSpaces = PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean(
+                getString(R.string.sp_toggle_spaces), true);
+
+        handlePassword(mSpaces);
+
+        s.setChecked(mSpaces);
+        s.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mChars = null;
     }
 
     @Override
@@ -61,19 +79,25 @@ public class PasswordFragment extends ExtFragment {
         ((TextView) findView(view)).setText(text);
     }
 
-    private void handlePassword() {
+    private void handlePassword(boolean hasSpaces) {
         String p;
         KeyManager km = KeyManager.getInstance();
 
         if (km.isChildKeyFinished()) {
             findView(R.id.fab).setVisibility(View.INVISIBLE);
-            p = Password.pickPassword(Arrays.copyOfRange(km.getChildKey().getmKey(), 1, 33), getActivity());
+            p = Password.pickPassword(Arrays.copyOfRange(km.getChildKey().getmKey(), 1, 33),
+                    getActivity(), true);
             km.clearChildKey();
         } else {
             findView(R.id.fab).setVisibility(View.VISIBLE);
-            p = Password.pickRandomPassword(getActivity());
+            p = Password.pickRandomPassword(getActivity(), true);
         }
 
+        mChars = p.toCharArray();
+        handleSetPassword(Password.toggleSpaces(mChars, mSpaces));
+    }
+
+    private void handleSetPassword(String p) {
         setTexttoTextView(R.id.tv_password, p);
         setTexttoTextView(R.id.tv_entropy, "Entropy: " + Password.calcEntropy(p) + " bits");
     }
@@ -82,8 +106,14 @@ public class PasswordFragment extends ExtFragment {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab:
-                handlePassword();
+                handlePassword(mSpaces);
                 break;
         }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        mSpaces = isChecked;
+        handleSetPassword(Password.toggleSpaces(mChars, isChecked));
     }
 }

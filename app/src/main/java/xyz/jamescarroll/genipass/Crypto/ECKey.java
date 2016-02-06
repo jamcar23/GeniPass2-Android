@@ -237,8 +237,8 @@ public class ECKey extends CryptoUtil {
             RIPEMD160Digest ripemd = new RIPEMD160Digest();
             byte[] digest = new byte[ripemd.getDigestSize()];
             BigInteger hu, hp;
-            String u = Password.pickRandomPassword(context);
-            String p = Password.pickRandomPassword(context);
+            String u = Password.pickRandomPassword(context, true);
+            String p = Password.pickRandomPassword(context, true);
 
             tl.addSplit("--- Begin iteration: " + iter + " ---");
 

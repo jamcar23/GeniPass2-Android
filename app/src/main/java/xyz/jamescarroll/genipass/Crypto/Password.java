@@ -169,13 +169,13 @@ public class Password extends CryptoUtil {
      * @return the password.
      */
 
-    public static String pickRandomPassword(Context context) {
+    public static String pickRandomPassword(Context context, boolean hasSpaces) {
         String p = "";
         byte[] bytes = new byte[16];
 
         while (calcEntropy(p) < 100) {
             kRand.nextBytes(bytes);
-            p = pickPassword(bytesToHex(bytes), context);
+            p = pickPassword(bytesToHex(bytes), context, hasSpaces);
         }
 
         return p;
@@ -192,8 +192,8 @@ public class Password extends CryptoUtil {
      * @return the password.
      */
 
-    public static String pickPassword(byte[] bytes, Context context) {
-        return pickPassword(bytesToHex(bytes), context);
+    public static String pickPassword(byte[] bytes, Context context, boolean hasSpaces) {
+        return pickPassword(bytesToHex(bytes), context, hasSpaces);
     }
 
     /**
@@ -207,7 +207,7 @@ public class Password extends CryptoUtil {
      * @return the password.
      */
 
-    public static String pickPassword(String hex, Context context) {
+    public static String pickPassword(String hex, Context context, boolean hasSpaces) {
         String t;
         int n = 0;
         char[] charHex = hex.toCharArray();
@@ -215,7 +215,6 @@ public class Password extends CryptoUtil {
         String[] pass = new String[6];
         InputStream is;
         BufferedReader br;
-        StringBuilder sb;
 
         for (int i = 0; i < charHex.length; i += 4) {
             if (i == charHex.length - 1 || wordLoc.size() == 6) {
@@ -254,13 +253,31 @@ public class Password extends CryptoUtil {
             }
         }
 
-        sb = new StringBuilder();
+        t = "";
 
-        for (String p : pass) {
-            sb.append(p);
+        for (String pas : pass) {
+            t += pas;
         }
 
-        return sb.toString();
+        return hasSpaces ? t : toggleSpaces(t.toCharArray(), false);
+    }
+
+    public static String toggleSpaces(char[] pass, boolean hasSpaces) {
+        String p = "";
+
+        if (hasSpaces) {
+            for (char c : pass) {
+                p += c;
+            }
+        } else {
+            for (char c : pass) {
+                if (c != ' ') {
+                    p += c;
+                }
+            }
+        }
+
+        return p;
     }
 
 }

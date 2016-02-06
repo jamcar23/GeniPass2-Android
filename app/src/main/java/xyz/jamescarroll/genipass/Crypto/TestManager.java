@@ -100,10 +100,10 @@ public class TestManager {
         public static final String kRipemdPassword = "RIPEMD Password";
         public static final String kMasterExtPrivate = "Master Extended Private";
         public static final String kMasterExtPublic = "Master Extended Public";
-        public static final String kFirstChildExtPrivate = "First Child Extender Private";
-        public static final String kFirstChildExtPublic = "First Child Extender Public";
-        public static final String kSecondChildExtPrivate = "Second Child Extender Private";
-        public static final String kSecondChildExtPublic = "Second Child Extender Public";
+        public static final String kFirstChildExtPrivate = "First Child Extended Private";
+        public static final String kFirstChildExtPublic = "First Child Extended Public";
+        public static final String kSecondChildExtPrivate = "Second Child Extended Private";
+        public static final String kSecondChildExtPublic = "Second Child Extended Public";
         public static final String kGenPassword = "Generated Password";
 
         private String mUsername;
@@ -122,7 +122,7 @@ public class TestManager {
         private String mResult = "";
         private int mNumPass = 0;
 
-        public Vector(String mUsername, String mPassword, String mService, String mTag) {
+        private Vector(String mUsername, String mPassword, String mService, String mTag) {
             this.mUsername = mUsername;
             this.mPassword = mPassword;
             this.mService = mService;
@@ -151,7 +151,7 @@ public class TestManager {
 
         public void compareTo(String in, String expected, String test) {
             if (in.equals(expected)) {
-               test += " PASS: " + in;
+               test += " PASS:\n" + in;
                 mNumPass++;
             } else {
                 test += " FAIL:\nGot\n" + in + "\nExpected\n" + expected;

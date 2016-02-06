@@ -22,6 +22,12 @@
             android:entryValues="@array/time_out_values"
             android:defaultValue="@string/fifteen" />
 
+        <SwitchPreference
+            android:key="@string/sp_toggle_spaces"
+            android:title="@string/toggle_spaces"
+            android:summary="@string/toggle_space_sum"
+            android:defaultValue="true"/>
+
     </PreferenceCategory>
 
     <PreferenceCategory

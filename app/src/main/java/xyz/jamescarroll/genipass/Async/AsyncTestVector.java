@@ -74,7 +74,7 @@ public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
                     TestManager.Vector.kSecondChildExtPublic);
 
             u = Password.pickPassword(Arrays.copyOfRange(new BigInteger(p, 16).toByteArray(), 32,
-                    64), mContext);
+                    64), mContext, true);
             vec.compareTo(u, vec.getmChildPassword(), TestManager.Vector.kGenPassword);
 
             result += vec.getmResult() + "\n--- End Test Vector " + mProgress + " ---\n\n";
