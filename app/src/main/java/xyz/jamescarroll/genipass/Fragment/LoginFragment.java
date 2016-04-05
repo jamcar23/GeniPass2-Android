@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import xyz.jamescarroll.genipass.Async.AsyncMasterKeyGen;
+import xyz.jamescarroll.genipass.Crypto.ECKey;
 import xyz.jamescarroll.genipass.Crypto.KeyManager;
 import xyz.jamescarroll.genipass.Crypto.Password;
 import xyz.jamescarroll.genipass.MainActivity;
@@ -59,11 +60,15 @@ public class LoginFragment extends ExtFragment {
     private void handleLoginBtnClick() {
         KeyManager km = KeyManager.getInstance();
         String p = getTextFromEditText(R.id.et_password);
+        String u = getTextFromEditText(R.id.et_username);
         String t;
         Intent toService;
 
         if (Password.calcEntropy(p) >= 100) {
-            new AsyncMasterKeyGen().execute(getTextFromEditText(R.id.et_username), p);
+            new AsyncMasterKeyGen().execute(u, p);
+            km.setmLoginText(Password.pickPassword(ECKey.genLoginText(u, p), getActivity(), true)
+                    .toCharArray());
+
             km.setmMasterBegin(true);
 
             toService = new Intent();

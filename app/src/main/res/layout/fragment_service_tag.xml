@@ -17,11 +17,26 @@
     tools:context="xyz.jamescarroll.genipass.Fragment.ServiceTagFragment"
     android:orientation="vertical">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/service_tag_header"
-        android:id="@+id/tv_service_tag" />
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/service_tag_header"
+            android:id="@+id/tv_service_tag" />
+
+        <TextView
+            android:layout_marginTop="@dimen/activity_horizontal_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_login_text"
+            android:text="This is a test"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="@color/material_grey300"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

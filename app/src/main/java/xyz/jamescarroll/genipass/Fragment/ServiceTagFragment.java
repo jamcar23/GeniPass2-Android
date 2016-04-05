@@ -20,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import xyz.jamescarroll.genipass.Async.AsyncChildKeyGen;
 import xyz.jamescarroll.genipass.Crypto.KeyManager;
@@ -56,6 +57,11 @@ public class ServiceTagFragment extends ExtFragment {
 
         if (km.ismRequestChildKeys() && !km.isChildKeyFinished()) {
             showProgressDialog();
+        }
+
+        if (km.getmLoginText() != null) {
+            ((TextView) findView(R.id.tv_login_text)).setText(km.getmLoginText(), 0,
+                    km.getmLoginText().length);
         }
     }
 

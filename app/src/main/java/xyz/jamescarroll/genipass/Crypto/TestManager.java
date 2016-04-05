@@ -65,29 +65,32 @@ public class TestManager {
 
     public Vector[] getTestVectors(Context context) {
         return new Vector[] {
-                new Vector("", "immortal finnish dionaea cubical appallingly tips ", "facebook", "", context.getString(R.string.vec_username),
-                        context.getString(R.string.vec1_password), context.getString(R.string.vec1_master_private),
+                new Vector("", "immortal finnish dionaea cubical appallingly tips ", "facebook", "",
+                        context.getString(R.string.vec1_login_text), context.getString(R.string.vec_username),
+                        context.getString(R.string.vec1_password),context.getString(R.string.vec1_master_private),
                         context.getString(R.string.vec1_master_public), context.getString(R.string.vec1_first_child_private),
                         context.getString(R.string.vec1_first_child_public), context.getString(R.string.vec1_second_child_private),
                         context.getString(R.string.vec1_second_child_public), "gaskin slummock parasympathomimetic bashbazouk redbone canine "),
-                new Vector("", "autochthonous perdu gecko buckskin silliness thysanoptera ", "github", "alpha", context.getString(R.string.vec_username),
+                new Vector("", "autochthonous perdu gecko buckskin silliness thysanoptera ", "github", "alpha",
+                        context.getString(R.string.vec2_login_text), context.getString(R.string.vec_username),
                         context.getString(R.string.vec2_password), context.getString(R.string.vec2_master_private),
                         context.getString(R.string.vec2_master_public), context.getString(R.string.vec2_first_child_private),
                         context.getString(R.string.vec2_first_child_public), context.getString(R.string.vec2_second_child_private),
                         context.getString(R.string.vec2_second_child_public), "ses homophonic regulate empetrum hilariously stuffy "),
-                new Vector("", "dyaus titillate roulade appelidage disputation penitentiary ", "google", "main", context.getString(R.string.vec_username),
+                new Vector("", "dyaus titillate roulade appelidage disputation penitentiary ", "google", "main",
+                        context.getString(R.string.vec3_login_text), context.getString(R.string.vec_username),
                         context.getString(R.string.vec3_password), context.getString(R.string.vec3_master_private),
                         context.getString(R.string.vec3_master_public), context.getString(R.string.vec3_first_child_private),
                         context.getString(R.string.vec3_first_child_public), context.getString(R.string.vec3_second_child_private),
                         context.getString(R.string.vec3_second_child_public), "monario seraphina alimentative sauerkraut atropidae dictyoptera "),
                 new Vector("", "chronological malady denim drip existing hellenic ", "Twitter",
-                        "Some tag", context.getString(R.string.vec_username),
+                        "Some tag", context.getString(R.string.vec4_login_text), context.getString(R.string.vec_username),
                         context.getString(R.string.vec4_password), context.getString(R.string.vec4_master_private),
                         context.getString(R.string.vec4_master_public), context.getString(R.string.vec4_first_child_private),
                         context.getString(R.string.vec4_first_child_public), context.getString(R.string.vec4_second_child_private),
                         context.getString(R.string.vec4_second_child_public), "glassblower hypobetalipoproteinemia ischiagra fastened gadoid bouncer "),
                 new Vector("", "louisiana ni-resist baltimore saprophyte guerilla blintz ",
-                        "Another site", "", context.getString(R.string.vec_username),
+                        "Another site", "", context.getString(R.string.vec5_login_text), context.getString(R.string.vec_username),
                         context.getString(R.string.vec5_password), context.getString(R.string.vec5_master_private),
                         context.getString(R.string.vec5_master_public), context.getString(R.string.vec5_first_child_private),
                         context.getString(R.string.vec5_first_child_public), context.getString(R.string.vec5_second_child_private),
@@ -98,6 +101,7 @@ public class TestManager {
     public static class Vector {
         public static final String kRipemdUsername = "RIPEMD Username";
         public static final String kRipemdPassword = "RIPEMD Password";
+        public static final String kLoginText = "Blake2 Login Text";
         public static final String kMasterExtPrivate = "Master Extended Private";
         public static final String kMasterExtPublic = "Master Extended Public";
         public static final String kFirstChildExtPrivate = "First Child Extended Private";
@@ -110,6 +114,7 @@ public class TestManager {
         private String mPassword;
         private String mService;
         private String mTag;
+        private String mLoginText;
         private String mRipemdUsername;
         private String mRipemdPassword;
         private String mMasterExtPrivate;
@@ -130,14 +135,15 @@ public class TestManager {
         }
 
         public Vector(String mUsername, String mPassword, String mService, String mTag,
-                      String mRipemdUsername, String mRipemdPassword, String mMasterExtPrivate,
-                      String mMasterExtPublic, String mFirstChildExtPrivate,
+                      String mLoginText, String mRipemdUsername, String mRipemdPassword,
+                      String mMasterExtPrivate, String mMasterExtPublic, String mFirstChildExtPrivate,
                       String mFirstChildExtPublic, String mSecondChildExtPrivate,
                       String mSecondChildExtPublic, String mChildPassword) {
             this.mUsername = mUsername;
             this.mPassword = mPassword;
             this.mService = mService;
             this.mTag = mTag;
+            this.mLoginText = mLoginText;
             this.mRipemdUsername = mRipemdUsername;
             this.mRipemdPassword = mRipemdPassword;
             this.mMasterExtPrivate = mMasterExtPrivate;
@@ -184,6 +190,10 @@ public class TestManager {
             return mRipemdPassword;
         }
 
+        public String getmLoginText() {
+            return mLoginText;
+        }
+
         public String getmMasterExtPrivate() {
             return mMasterExtPrivate;
         }
@@ -213,7 +223,7 @@ public class TestManager {
         }
 
         public String getmResult() {
-            return mNumPass + " out of 9 passed. \n\n" + mResult;
+            return mNumPass + " out of 10 passed. \n\n" + mResult;
         }
 
 

@@ -33,6 +33,7 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration, Runnable {
     private boolean mMasterBegin = false;
     private boolean mRequestChildKeys = false;
     private Handler mHandler;
+    private char[] mLoginText;
 
     private KeyManager() {
     }
@@ -82,6 +83,7 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration, Runnable {
         clearChildKey();
         mMaster = null;
         mControl = null;
+        mLoginText = null;
         mMasterBegin = false;
 
         if (mHandler != null) {
@@ -100,6 +102,14 @@ public class KeyManager implements AsyncKeyGen.OnKeyGeneration, Runnable {
 
     public boolean isChildKeyFinished() {
         return mChild != null && mChild.getmKey() != null && mChild.getmKey().length > 0;
+    }
+
+    public char[] getmLoginText() {
+        return mLoginText;
+    }
+
+    public void setmLoginText(char[] mLoginText) {
+        this.mLoginText = mLoginText;
     }
 
     public void beginTimeOut(String time) {

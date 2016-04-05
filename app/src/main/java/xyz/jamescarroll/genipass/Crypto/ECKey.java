@@ -215,6 +215,22 @@ public class ECKey extends CryptoUtil {
         return calcExtPublicKey(digest).setmMaster(true);
     }
 
+    public static byte[] genLoginText(String u, String p) {
+        RIPEMD160Digest ripemd = new RIPEMD160Digest();
+        Blake2b.Blake2b256 blake = new Blake2b.Blake2b256();
+        byte[] digest = new byte[ripemd.getDigestSize()];
+        byte[] b = (u + p).getBytes();
+
+        ripemd.update(b, 0, b.length);
+        ripemd.doFinal(digest, 0);
+
+        for (int i = 0; i < 256; i++) {
+            digest = blake.digest(blake.digest(digest));
+        }
+
+        return digest;
+    }
+
     /**
      * Inner static class for getting a rough estimate of how long crypto
      * operations take on different devices. This inner class isn't actually
@@ -314,6 +330,10 @@ public class ECKey extends CryptoUtil {
             ripe.doFinal(out, 0);
 
             return bytesToHex(out);
+        }
+
+        public static String genLoginHex(String u, String p) {
+            return bytesToHex(genLoginText(u, p));
         }
 
         public static String genMasterExtPrivateKey(String u, String p) {

@@ -26,6 +26,7 @@ import xyz.jamescarroll.genipass.Crypto.TestManager;
  * Created by jamescarroll on 1/28/16.
  */
 public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
+    private static final String TAG = "AsyncTestVector";
     private OnResult mListener;
     private Context mContext;
     private int mProgress = 0;
@@ -52,6 +53,9 @@ public class AsyncTestVector extends AsyncTask<Void, Integer, String> {
                     TestManager.Vector.kRipemdUsername);
             vec.compareTo(p, vec.getmRipemdPassword(),
                     TestManager.Vector.kRipemdPassword);
+
+            vec.compareTo(ECKey.UnitTest.genLoginHex(vec.getmUsername(), vec.getmPassword()),
+                    vec.getmLoginText(), TestManager.Vector.kLoginText);
 
             u = ECKey.UnitTest.genMasterExtPrivateKey(u, p);
             p = ECKey.UnitTest.genExtPublicKey(u);
